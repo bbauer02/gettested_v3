@@ -17,7 +17,7 @@ import { RoleBasedGuard } from 'src/auth/guard';
 export function QuestionCreateView() {
   const { user } = useAuthContext();
   return (
-    <RoleBasedGuard hasContent acceptPower={10} currentPower={user.systemRole.power}>
+    <RoleBasedGuard hasContent acceptPower={1} currentPower={user.systemRole.power}>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Create a new question"

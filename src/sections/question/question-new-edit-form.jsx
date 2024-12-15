@@ -101,7 +101,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
   } = methods;
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
-  console.log(fields)
+
   useEffect(() => {
     if (currentQuestion) {
       reset(defaultValues);
@@ -138,6 +138,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
       setQuestionType(null);
     }
   };
+
 
   const renderDetails = (
     <Card>
@@ -349,7 +350,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
         {renderDetails}
         {renderProperties}
         {renderQuestionTypes}
-        <QuestionNewEditMcq />
+        {questionType && questionType.value === "MCQ" ? <QuestionNewEditMcq /> : ""}
         {renderActions}
       </Stack>
     </Form>
