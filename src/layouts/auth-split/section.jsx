@@ -1,54 +1,53 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
-import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
-import { CONFIG } from 'src/config-global';
-import { varAlpha, bgGradient } from 'src/theme/styles';
+import { CONFIG } from 'src/global-config';
 
 // ----------------------------------------------------------------------
 
-export function Section({
+export function AuthSplitSection({
   sx,
   method,
-  layoutQuery,
   methods,
+  layoutQuery = 'md',
   title = 'Manage the job',
   imgUrl = `${CONFIG.assetsDir}/assets/illustrations/illustration-dashboard.webp`,
   subtitle = 'More effectively with optimized workflows.',
   ...other
 }) {
-  const theme = useTheme();
-
   return (
     <Box
-      sx={{
-        ...bgGradient({
-          color: `0deg, ${varAlpha(
-            theme.vars.palette.background.defaultChannel,
-            0.92
-          )}, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)}`,
-          imgUrl: `${CONFIG.assetsDir}/assets/background/background-3-blur.webp`,
+      sx={[
+        (theme) => ({
+          ...theme.mixins.bgGradient({
+            images: [
+              `linear-gradient(0deg, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)}, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)})`,
+              `url(${CONFIG.assetsDir}/assets/background/background-3-blur.webp)`,
+            ],
+          }),
+          px: 3,
+          pb: 3,
+          width: 1,
+          maxWidth: 480,
+          display: 'none',
+          position: 'relative',
+          pt: 'var(--layout-header-desktop-height)',
+          [theme.breakpoints.up(layoutQuery)]: {
+            gap: 8,
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          },
         }),
-        px: 3,
-        pb: 3,
-        width: 1,
-        maxWidth: 480,
-        display: 'none',
-        position: 'relative',
-        pt: 'var(--layout-header-desktop-height)',
-        [theme.breakpoints.up(layoutQuery)]: {
-          gap: 8,
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        },
-        ...sx,
-      }}
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
       {...other}
     >
       <div>
@@ -71,7 +70,7 @@ export function Section({
       />
 
       {!!methods?.length && method && (
-        <Box component="ul" gap={2} display="flex">
+        <Box component="ul" sx={{ gap: 2, display: 'flex' }}>
           {methods.map((option) => {
             const selected = method === option.label.toLowerCase();
 
@@ -90,9 +89,7 @@ export function Section({
                   <Link
                     component={RouterLink}
                     href={option.path}
-                    sx={{
-                      ...(!selected && { pointerEvents: 'none' }),
-                    }}
+                    sx={{ ...(!selected && { pointerEvents: 'none' }) }}
                   >
                     <Box
                       component="img"

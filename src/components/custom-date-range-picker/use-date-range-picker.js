@@ -8,7 +8,6 @@ export function useDateRangePicker(start, end) {
   const [open, setOpen] = useState(false);
 
   const [endDate, setEndDate] = useState(end);
-
   const [startDate, setStartDate] = useState(start);
 
   const error = fIsAfter(startDate, endDate);
@@ -45,18 +44,18 @@ export function useDateRangePicker(start, end) {
     endDate,
     onChangeStartDate,
     onChangeEndDate,
-    //
+    /********/
     open,
     onOpen,
     onClose,
     onReset,
-    //
-    selected: !!startDate && !!endDate,
+    /********/
     error,
-    //
+    selected: !!startDate && !!endDate,
+    /********/
     label: fDateRangeShortLabel(startDate, endDate, true),
     shortLabel: fDateRangeShortLabel(startDate, endDate),
-    //
+    /********/
     setStartDate,
     setEndDate,
   };

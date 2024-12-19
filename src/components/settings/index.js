@@ -2,4 +2,4 @@ export * from './drawer';
 
 export * from './context';
 
-export * from './config-settings';
+export * from './settings-config';

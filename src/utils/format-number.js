@@ -1,7 +1,5 @@
 import { formatNumberLocale } from 'src/locales';
 
-// ----------------------------------------------------------------------
-
 const DEFAULT_LOCALE = { code: 'en-US', currency: 'USD' };
 
 function processInput(inputValue) {

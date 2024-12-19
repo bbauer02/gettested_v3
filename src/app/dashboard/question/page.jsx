@@ -1,6 +1,6 @@
-import { CONFIG } from 'src/config-global';
+import { CONFIG } from 'src/global-config';
 
-import { QuestionListView} from "src/sections/question/view";
+import { QuestionListView } from 'src/sections/question/view';
 
 // ----------------------------------------------------------------------
 

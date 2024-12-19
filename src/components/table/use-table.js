@@ -5,15 +5,15 @@ import { useState, useCallback } from 'react';
 export function useTable(props) {
   const [dense, setDense] = useState(!!props?.defaultDense);
 
-  const [page, setPage] = useState(props?.defaultCurrentPage || 0);
+  const [page, setPage] = useState(props?.defaultCurrentPage ?? 0);
 
-  const [orderBy, setOrderBy] = useState(props?.defaultOrderBy || 'name');
+  const [orderBy, setOrderBy] = useState(props?.defaultOrderBy ?? 'name');
 
-  const [rowsPerPage, setRowsPerPage] = useState(props?.defaultRowsPerPage || 5);
+  const [rowsPerPage, setRowsPerPage] = useState(props?.defaultRowsPerPage ?? 5);
 
-  const [order, setOrder] = useState(props?.defaultOrder || 'asc');
+  const [order, setOrder] = useState(props?.defaultOrder ?? 'asc');
 
-  const [selected, setSelected] = useState(props?.defaultSelected || []);
+  const [selected, setSelected] = useState(props?.defaultSelected ?? []);
 
   const onSort = useCallback(
     (id) => {
@@ -75,7 +75,7 @@ export function useTable(props) {
   );
 
   const onUpdatePageDeleteRows = useCallback(
-    ({ totalRowsInPage, totalRowsFiltered }) => {
+    (totalRowsInPage, totalRowsFiltered) => {
       const totalSelected = selected.length;
 
       setSelected([]);
@@ -101,11 +101,11 @@ export function useTable(props) {
     page,
     orderBy,
     rowsPerPage,
-    //
+    /********/
     selected,
     onSelectRow,
     onSelectAllRows,
-    //
+    /********/
     onSort,
     onChangePage,
     onChangeDense,
@@ -113,7 +113,7 @@ export function useTable(props) {
     onChangeRowsPerPage,
     onUpdatePageDeleteRow,
     onUpdatePageDeleteRows,
-    //
+    /********/
     setPage,
     setDense,
     setOrder,

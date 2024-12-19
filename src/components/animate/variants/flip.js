@@ -1,34 +1,57 @@
-import { varTranExit, varTranEnter } from './transition';
+import { transitionExit, transitionEnter } from './transition';
 
 // ----------------------------------------------------------------------
 
-export const varFlip = (props) => {
-  const durationIn = props?.durationIn;
-  const durationOut = props?.durationOut;
-  const easeIn = props?.easeIn;
-  const easeOut = props?.easeOut;
+export const varFlip = (direction, options) => {
+  const transitionIn = options?.transitionIn;
+  const transitionOut = options?.transitionOut;
 
-  return {
-    // IN
+  const variants = {
+    /**** In ****/
     inX: {
       initial: { rotateX: -180, opacity: 0 },
-      animate: { rotateX: 0, opacity: 1, transition: varTranEnter({ durationIn, easeIn }) },
-      exit: { rotateX: -180, opacity: 0, transition: varTranExit({ durationOut, easeOut }) },
+      animate: {
+        rotateX: 0,
+        opacity: 1,
+        transition: transitionEnter(transitionIn),
+      },
+      exit: {
+        rotateX: -180,
+        opacity: 0,
+        transition: transitionExit(transitionOut),
+      },
     },
     inY: {
       initial: { rotateY: -180, opacity: 0 },
-      animate: { rotateY: 0, opacity: 1, transition: varTranEnter({ durationIn, easeIn }) },
-      exit: { rotateY: -180, opacity: 0, transition: varTranExit({ durationOut, easeOut }) },
+      animate: {
+        rotateY: 0,
+        opacity: 1,
+        transition: transitionEnter(transitionIn),
+      },
+      exit: {
+        rotateY: -180,
+        opacity: 0,
+        transition: transitionExit(transitionOut),
+      },
     },
-
-    // OUT
+    /**** Out ****/
     outX: {
       initial: { rotateX: 0, opacity: 1 },
-      animate: { rotateX: 70, opacity: 0, transition: varTranExit({ durationOut, easeOut }) },
+      animate: {
+        rotateX: 70,
+        opacity: 0,
+        transition: transitionExit(transitionOut),
+      },
     },
     outY: {
       initial: { rotateY: 0, opacity: 1 },
-      animate: { rotateY: 70, opacity: 0, transition: varTranExit({ durationOut, easeOut }) },
+      animate: {
+        rotateY: 70,
+        opacity: 0,
+        transition: transitionExit(transitionOut),
+      },
     },
   };
+
+  return variants[direction];
 };

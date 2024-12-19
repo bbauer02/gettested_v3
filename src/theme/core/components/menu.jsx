@@ -1,12 +1,10 @@
-import { menuItem } from '../../styles';
-
 // ----------------------------------------------------------------------
 
 const MuiMenuItem = {
   /** **************************************
    * STYLE
    *************************************** */
-  styleOverrides: { root: ({ theme }) => ({ ...menuItem(theme) }) },
+  styleOverrides: { root: ({ theme }) => ({ ...theme.mixins.menuItemStyles(theme) }) },
 };
 
 // ----------------------------------------------------------------------

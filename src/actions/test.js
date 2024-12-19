@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { fetcher, endpoints } from 'src/utils/axios';
+import { fetcher, endpoints } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
 
@@ -13,8 +13,7 @@ const swrOptions = {
 
 // ----------------------------------------------------------------------
 
-
-export function useGetTests(child=false) {
+export function useGetTests(child = false) {
   const url = `${endpoints.test.list}?child=${child}`;
 
   const { data, isLoading, error, isValidating } = useSWR(url, fetcher, swrOptions);

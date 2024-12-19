@@ -1,11 +1,11 @@
-import Stack from '@mui/material/Stack';
+import { mergeClasses } from 'minimal-shared/utils';
+
 import { useTheme } from '@mui/material/styles';
 
 import { NavList } from './nav-list';
-import { NavUl, NavLi } from '../styles';
 import { Scrollbar } from '../../scrollbar';
-import { navSectionClasses } from '../classes';
-import { navSectionCssVars } from '../css-vars';
+import { Nav, NavUl, NavLi } from '../components';
+import { navSectionClasses, navSectionCssVars } from '../styles';
 
 // ----------------------------------------------------------------------
 
@@ -13,36 +13,36 @@ export function NavSectionHorizontal({
   sx,
   data,
   render,
+  className,
   slotProps,
+  currentRole,
   enabledRootRedirect,
   cssVars: overridesVars,
+  ...other
 }) {
   const theme = useTheme();
 
-  const cssVars = {
-    ...navSectionCssVars.horizontal(theme),
-    ...overridesVars,
-  };
+  const cssVars = { ...navSectionCssVars.horizontal(theme), ...overridesVars };
 
   return (
     <Scrollbar
       sx={{ height: 1 }}
-      slotProps={{
-        content: { height: 1, display: 'flex', alignItems: 'center' },
-      }}
+      slotProps={{ contentSx: { height: 1, display: 'flex', alignItems: 'center' } }}
     >
-      <Stack
-        component="nav"
-        direction="row"
-        alignItems="center"
-        className={navSectionClasses.horizontal.root}
-        sx={{
-          ...cssVars,
-          mx: 'auto',
-          height: 1,
-          minHeight: 'var(--nav-height)',
-          ...sx,
-        }}
+      <Nav
+        className={mergeClasses([navSectionClasses.horizontal, className])}
+        sx={[
+          () => ({
+            ...cssVars,
+            height: 1,
+            mx: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: 'var(--nav-height)',
+          }),
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+        {...other}
       >
         <NavUl sx={{ flexDirection: 'row', gap: 'var(--nav-item-gap)' }}>
           {data.map((group) => (
@@ -52,18 +52,19 @@ export function NavSectionHorizontal({
               cssVars={cssVars}
               items={group.items}
               slotProps={slotProps}
+              currentRole={currentRole}
               enabledRootRedirect={enabledRootRedirect}
             />
           ))}
         </NavUl>
-      </Stack>
+      </Nav>
     </Scrollbar>
   );
 }
 
 // ----------------------------------------------------------------------
 
-function Group({ items, render, slotProps, enabledRootRedirect, cssVars }) {
+function Group({ items, render, cssVars, slotProps, currentRole, enabledRootRedirect }) {
   return (
     <NavLi>
       <NavUl sx={{ flexDirection: 'row', gap: 'var(--nav-item-gap)' }}>
@@ -75,6 +76,7 @@ function Group({ items, render, slotProps, enabledRootRedirect, cssVars }) {
             render={render}
             cssVars={cssVars}
             slotProps={slotProps}
+            currentRole={currentRole}
             enabledRootRedirect={enabledRootRedirect}
           />
         ))}

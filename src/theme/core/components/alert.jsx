@@ -1,7 +1,7 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import SvgIcon from '@mui/material/SvgIcon';
 import { alertClasses } from '@mui/material/Alert';
-
-import { varAlpha, stylesMode } from '../../styles';
 
 // ----------------------------------------------------------------------
 
@@ -99,13 +99,15 @@ const MuiAlert = {
         colors: styleColors(ownerState, (color) => ({
           color: theme.vars.palette[color].darker,
           backgroundColor: theme.vars.palette[color].lighter,
-          [stylesMode.dark]: {
+          ...theme.applyStyles('dark', {
             color: theme.vars.palette[color].lighter,
             backgroundColor: theme.vars.palette[color].darker,
-          },
+          }),
           [`& .${alertClasses.icon}`]: {
             color: theme.vars.palette[color].main,
-            [stylesMode.dark]: { color: theme.vars.palette[color].light },
+            ...theme.applyStyles('dark', {
+              color: theme.vars.palette[color].light,
+            }),
           },
         })),
       };
@@ -133,7 +135,9 @@ const MuiAlert = {
           backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.08),
           color: theme.vars.palette[color].dark,
           border: `solid 1px ${varAlpha(theme.vars.palette[color].mainChannel, 0.16)}`,
-          [stylesMode.dark]: { color: theme.vars.palette[color].light },
+          ...theme.applyStyles('dark', {
+            color: theme.vars.palette[color].light,
+          }),
           [`& .${alertClasses.icon}`]: { color: theme.vars.palette[color].main },
         })),
       };

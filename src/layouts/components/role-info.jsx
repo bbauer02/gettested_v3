@@ -2,11 +2,12 @@
 
 import Box from '@mui/material/Box';
 
+import { CONFIG } from 'src/global-config';
+
 import { Label } from 'src/components/label';
 
 import { useAuthContext } from 'src/auth/hooks';
 
-import { CONFIG } from 'src/config-global';
 // ----------------------------------------------------------------------
 
 export function RoleInfo({ data = [], sx, ...other }) {
@@ -14,10 +15,10 @@ export function RoleInfo({ data = [], sx, ...other }) {
   const mediaQuery = 'sm';
 
   let displayInstitutName = `${CONFIG.appName} v${CONFIG.appVersion}`;
-  let displayRole = user.systemRole.label;
-  if(user.instituts && user.instituts.length >= 1) {
-    displayInstitutName = `${displayInstitutName} | ${user.instituts[0].Institut.label}`;
-    displayRole = user.instituts[0].Role.label;
+  let displayRole = user?.systemRole.label;
+  if (user?.instituts && user?.instituts.length >= 1) {
+    displayInstitutName = `${displayInstitutName} | ${user?.instituts[0].Institut.label}`;
+    displayRole = user?.instituts[0].Role.label;
   }
   return (
     <>
@@ -37,7 +38,7 @@ export function RoleInfo({ data = [], sx, ...other }) {
         {displayInstitutName}
       </Box>
       <Label
-        color='default'
+        color="default"
         sx={{
           typography: 'subtitle3',
           height: 22,

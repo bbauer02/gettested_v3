@@ -6,23 +6,21 @@ import { z as zod } from 'zod';
 export const schemaHelper = {
   /**
    * Phone number
-   * defaultValue === ''
+   * Apply for phone number input.
    */
   phoneNumber: (props) =>
     zod
       .string({
-        required_error: props?.message?.required_error ?? 'Phone number is required!',
-        invalid_type_error: props?.message?.invalid_type_error ?? 'Invalid phone number!',
+        required_error: props?.message?.required ?? 'Phone number is required!',
+        invalid_type_error: props?.message?.invalid_type ?? 'Invalid phone number!',
       })
-      .min(1, {
-        message: props?.message?.required_error ?? 'Phone number is required!',
-      })
-      .refine((data) => props?.isValidPhoneNumber?.(data), {
-        message: props?.message?.invalid_type_error ?? 'Invalid phone number!',
+      .min(1, { message: props?.message?.required ?? 'Phone number is required!' })
+      .refine((data) => props?.isValid?.(data), {
+        message: props?.message?.invalid_type ?? 'Invalid phone number!',
       }),
   /**
    * Date
-   * defaultValue === null
+   * Apply for date pickers.
    */
   date: (props) =>
     zod.coerce
@@ -36,7 +34,7 @@ export const schemaHelper = {
         if (!dateString) {
           ctx.addIssue({
             code: zod.ZodIssueCode.custom,
-            message: props?.message?.required_error ?? 'Date is required!',
+            message: props?.message?.required ?? 'Date is required!',
           });
           return null;
         }
@@ -44,7 +42,7 @@ export const schemaHelper = {
         if (!stringToDate.safeParse(date).success) {
           ctx.addIssue({
             code: zod.ZodIssueCode.invalid_date,
-            message: props?.message?.invalid_type_error ?? 'Invalid Date!!',
+            message: props?.message?.invalid_type ?? 'Invalid Date!!',
           });
         }
 
@@ -54,30 +52,46 @@ export const schemaHelper = {
   /**
    * Editor
    * defaultValue === '' | <p></p>
+   * Apply for editor
    */
-  editor: (props) =>
-    zod.string().min(8, {
-      message: props?.message?.required_error ?? 'Editor is required!',
-    }),
+  editor: (props) => zod.string().min(8, { message: props?.message ?? 'Content is required!' }),
   /**
-   * Object
-   * defaultValue === null
+   * Nullable Input
+   * Apply for input, select... with null value.
    */
-  objectOrNull: (props) =>
-    zod.custom().refine((data) => data !== null && data !== '', {
-      message: props?.message?.required_error ?? 'Field is required!',
+  nullableInput: (schema, options) =>
+    schema.nullable().transform((val, ctx) => {
+      if (val === null || val === undefined) {
+        ctx.addIssue({
+          code: zod.ZodIssueCode.custom,
+          message: options?.message ?? 'Field can not be null!',
+        });
+        return val;
+      }
+      return val;
     }),
   /**
    * Boolean
-   * defaultValue === false
+   * Apply for checkbox, switch...
    */
   boolean: (props) =>
-    zod.coerce.boolean().refine((bool) => bool === true, {
-      message: props?.message?.required_error ?? 'Switch is required!',
+    zod.boolean({ coerce: true }).refine((val) => val === true, {
+      message: props?.message ?? 'Field is required!',
     }),
   /**
+   * Slider
+   * Apply for slider with range [min, max].
+   */
+  sliderRange: (props) =>
+    zod
+      .number()
+      .array()
+      .refine((data) => data[0] >= props?.min && data[1] <= props?.max, {
+        message: props.message ?? `Range must be between ${props?.min} and ${props?.max}`,
+      }),
+  /**
    * File
-   * defaultValue === '' || null
+   * Apply for upload single file.
    */
   file: (props) =>
     zod.custom().transform((data, ctx) => {
@@ -86,7 +100,7 @@ export const schemaHelper = {
       if (!hasFile) {
         ctx.addIssue({
           code: zod.ZodIssueCode.custom,
-          message: props?.message?.required_error ?? 'File is required!',
+          message: props?.message ?? 'File is required!',
         });
         return null;
       }
@@ -95,7 +109,7 @@ export const schemaHelper = {
     }),
   /**
    * Files
-   * defaultValue === []
+   * Apply for upload multiple files.
    */
   files: (props) =>
     zod.array(zod.custom()).transform((data, ctx) => {
@@ -104,7 +118,7 @@ export const schemaHelper = {
       if (!data.length) {
         ctx.addIssue({
           code: zod.ZodIssueCode.custom,
-          message: props?.message?.required_error ?? 'Files is required!',
+          message: props?.message ?? 'Files is required!',
         });
       } else if (data.length < minFiles) {
         ctx.addIssue({

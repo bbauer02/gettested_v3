@@ -1,21 +1,30 @@
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
+import { varAlpha, mergeClasses } from 'minimal-shared/utils';
 
-import { varAlpha, hideScrollY } from 'src/theme/styles';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { NavSectionMini, NavSectionVertical } from 'src/components/nav-section';
 
+import { layoutClasses } from '../core/classes';
 import { NavUpgrade } from '../components/nav-upgrade';
 import { NavToggleButton } from '../components/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
-export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleNav, ...other }) {
-  const theme = useTheme();
-
-  const renderNavVertical = (
+export function NavVertical({
+  sx,
+  data,
+  slots,
+  cssVars,
+  className,
+  isNavMini,
+  onToggleNav,
+  layoutQuery = 'md',
+  ...other
+}) {
+  const renderNavVertical = () => (
     <>
       {slots?.topArea ?? (
         <Box sx={{ pl: 3.5, pt: 2.5, pb: 1 }}>
@@ -24,14 +33,14 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} {...other} />
+        <NavSectionVertical data={data} cssVars={cssVars} sx={{ px: 2, flex: '1 1 auto' }} />
 
         {slots?.bottomArea ?? <NavUpgrade />}
       </Scrollbar>
     </>
   );
 
-  const renderNavMini = (
+  const renderNavMini = () => (
     <>
       {slots?.topArea ?? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 2.5 }}>
@@ -41,8 +50,16 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
 
       <NavSectionMini
         data={data}
-        sx={{ pb: 2, px: 0.5, ...hideScrollY, flex: '1 1 auto', overflowY: 'auto' }}
-        {...other}
+        cssVars={cssVars}
+        sx={[
+          (theme) => ({
+            ...theme.mixins.hideScrollY,
+            pb: 2,
+            px: 0.5,
+            flex: '1 1 auto',
+            overflowY: 'auto',
+          }),
+        ]}
       />
 
       {slots?.bottomArea}
@@ -50,39 +67,46 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
   );
 
   return (
-    <Box
-      sx={{
-        top: 0,
-        left: 0,
-        height: 1,
-        display: 'none',
-        position: 'fixed',
-        flexDirection: 'column',
-        bgcolor: 'var(--layout-nav-bg)',
-        zIndex: 'var(--layout-nav-zIndex)',
-        width: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
-        borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,
-        transition: theme.transitions.create(['width'], {
-          easing: 'var(--layout-transition-easing)',
-          duration: 'var(--layout-transition-duration)',
-        }),
-        [theme.breakpoints.up(layoutQuery)]: {
-          display: 'flex',
-        },
-        ...sx,
-      }}
+    <NavRoot
+      isNavMini={isNavMini}
+      layoutQuery={layoutQuery}
+      className={mergeClasses([layoutClasses.nav.root, layoutClasses.nav.vertical, className])}
+      sx={sx}
+      {...other}
     >
       <NavToggleButton
         isNavMini={isNavMini}
         onClick={onToggleNav}
-        sx={{
-          display: 'none',
-          [theme.breakpoints.up(layoutQuery)]: {
-            display: 'inline-flex',
-          },
-        }}
+        sx={[
+          (theme) => ({
+            display: 'none',
+            [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
+          }),
+        ]}
       />
-      {isNavMini ? renderNavMini : renderNavVertical}
-    </Box>
+      {isNavMini ? renderNavMini() : renderNavVertical()}
+    </NavRoot>
   );
 }
+
+// ----------------------------------------------------------------------
+
+const NavRoot = styled('div', {
+  shouldForwardProp: (prop) => !['isNavMini', 'layoutQuery', 'sx'].includes(prop),
+})(({ isNavMini, layoutQuery = 'md', theme }) => ({
+  top: 0,
+  left: 0,
+  height: '100%',
+  display: 'none',
+  position: 'fixed',
+  flexDirection: 'column',
+  zIndex: 'var(--layout-nav-zIndex)',
+  backgroundColor: 'var(--layout-nav-bg)',
+  width: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
+  borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,
+  transition: theme.transitions.create(['width'], {
+    easing: 'var(--layout-transition-easing)',
+    duration: 'var(--layout-transition-duration)',
+  }),
+  [theme.breakpoints.up(layoutQuery)]: { display: 'flex' },
+}));

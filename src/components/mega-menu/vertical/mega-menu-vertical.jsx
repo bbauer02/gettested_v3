@@ -1,10 +1,11 @@
-import Stack from '@mui/material/Stack';
+import { mergeClasses } from 'minimal-shared/utils';
+import { useClientRect } from 'minimal-shared/hooks';
+
 import { useTheme } from '@mui/material/styles';
 
 import { NavList } from './nav-list';
-import { NavUl } from '../../nav-section';
-import { megaMenuClasses } from '../classes';
-import { megaMenuCssVars } from '../css-vars';
+import { Nav, NavUl } from '../components';
+import { megaMenuVars, megaMenuClasses } from '../styles';
 
 // ----------------------------------------------------------------------
 
@@ -13,22 +14,32 @@ export function MegaMenuVertical({
   data,
   render,
   slotProps,
+  className,
   enabledRootRedirect,
   cssVars: overridesVars,
   ...other
 }) {
   const theme = useTheme();
 
+  const navRect = useClientRect();
+
   const cssVars = {
-    ...megaMenuCssVars.vertical(theme),
+    ...megaMenuVars(theme, 'vertical'),
     ...overridesVars,
   };
 
   return (
-    <Stack
-      component="nav"
-      className={megaMenuClasses.vertical.root}
-      sx={{ ...cssVars, flex: '1 1 auto', ...sx }}
+    <Nav
+      ref={navRect.elementRef}
+      className={mergeClasses([megaMenuClasses.vertical, className])}
+      sx={[
+        () => ({
+          ...cssVars,
+          flex: '1 1 auto',
+          width: 'var(--nav-width)',
+        }),
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
       {...other}
     >
       <NavUl sx={{ gap: 'var(--nav-item-gap)' }}>
@@ -37,12 +48,11 @@ export function MegaMenuVertical({
             key={list.title}
             data={list}
             render={render}
-            cssVars={cssVars}
             slotProps={slotProps}
             enabledRootRedirect={enabledRootRedirect}
           />
         ))}
       </NavUl>
-    </Stack>
+    </Nav>
   );
 }

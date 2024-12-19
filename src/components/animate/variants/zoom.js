@@ -1,34 +1,40 @@
-import { varTranExit, varTranEnter } from './transition';
+import { transitionExit, transitionEnter } from './transition';
 
 // ----------------------------------------------------------------------
 
-export const varZoom = (props) => {
-  const distance = props?.distance || 720;
-  const durationIn = props?.durationIn;
-  const durationOut = props?.durationOut;
-  const easeIn = props?.easeIn;
-  const easeOut = props?.easeOut;
+export const varZoom = (direction, options) => {
+  const distance = options?.distance || 720;
+  const transitionIn = options?.transitionIn;
+  const transitionOut = options?.transitionOut;
 
-  return {
-    // IN
+  const variants = {
+    /**** In ****/
     in: {
       initial: { scale: 0, opacity: 0 },
-      animate: { scale: 1, opacity: 1, transition: varTranEnter({ durationIn, easeIn }) },
-      exit: { scale: 0, opacity: 0, transition: varTranExit({ durationOut, easeOut }) },
+      animate: {
+        scale: 1,
+        opacity: 1,
+        transition: transitionEnter(transitionIn),
+      },
+      exit: { scale: 0, opacity: 0, transition: transitionExit(transitionOut) },
     },
     inUp: {
-      initial: { scale: 0, opacity: 0, translateY: distance },
+      initial: {
+        scale: 0,
+        opacity: 0,
+        translateY: distance,
+      },
       animate: {
         scale: 1,
         opacity: 1,
         translateY: 0,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
       exit: {
         scale: 0,
         opacity: 0,
         translateY: distance,
-        transition: varTranExit({ durationOut, easeOut }),
+        transition: transitionExit(transitionOut),
       },
     },
     inDown: {
@@ -37,13 +43,13 @@ export const varZoom = (props) => {
         scale: 1,
         opacity: 1,
         translateY: 0,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
       exit: {
         scale: 0,
         opacity: 0,
         translateY: -distance,
-        transition: varTranExit({ durationOut, easeOut }),
+        transition: transitionExit(transitionOut),
       },
     },
     inLeft: {
@@ -52,13 +58,13 @@ export const varZoom = (props) => {
         scale: 1,
         opacity: 1,
         translateX: 0,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
       exit: {
         scale: 0,
         opacity: 0,
         translateX: -distance,
-        transition: varTranExit({ durationOut, easeOut }),
+        transition: transitionExit(transitionOut),
       },
     },
     inRight: {
@@ -67,20 +73,23 @@ export const varZoom = (props) => {
         scale: 1,
         opacity: 1,
         translateX: 0,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
       exit: {
         scale: 0,
         opacity: 0,
         translateX: distance,
-        transition: varTranExit({ durationOut, easeOut }),
+        transition: transitionExit(transitionOut),
       },
     },
-
-    // OUT
+    /**** Out ****/
     out: {
       initial: { scale: 1, opacity: 1 },
-      animate: { scale: 0, opacity: 0, transition: varTranEnter({ durationIn, easeIn }) },
+      animate: {
+        scale: 0,
+        opacity: 0,
+        transition: transitionEnter(transitionIn),
+      },
     },
     outUp: {
       initial: { scale: 1, opacity: 1 },
@@ -88,7 +97,7 @@ export const varZoom = (props) => {
         scale: 0,
         opacity: 0,
         translateY: -distance,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
     },
     outDown: {
@@ -97,7 +106,7 @@ export const varZoom = (props) => {
         scale: 0,
         opacity: 0,
         translateY: distance,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
     },
     outLeft: {
@@ -106,7 +115,7 @@ export const varZoom = (props) => {
         scale: 0,
         opacity: 0,
         translateX: -distance,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
     },
     outRight: {
@@ -115,8 +124,10 @@ export const varZoom = (props) => {
         scale: 0,
         opacity: 0,
         translateX: distance,
-        transition: varTranEnter({ durationIn, easeIn }),
+        transition: transitionEnter(transitionIn),
       },
     },
   };
+
+  return variants[direction];
 };

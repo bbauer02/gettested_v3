@@ -9,7 +9,7 @@ import { useRouter } from 'src/routes/hooks';
 import { toast } from 'src/components/snackbar';
 
 import { allLangs } from './all-langs';
-import { fallbackLng, changeLangMessages as messages } from './config-locales';
+import { fallbackLng, changeLangMessages as messages } from './locales-config';
 
 // ----------------------------------------------------------------------
 

@@ -2,15 +2,13 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { buttonClasses } from '@mui/material/Button';
 import { dialogActionsClasses } from '@mui/material/DialogActions';
 
-import { stylesMode } from '../../styles';
-
 // ----------------------------------------------------------------------
 
 /**
  * Icons
  */
 /* https://icon-sets.iconify.design/eva/chevron-down-fill */
-export const PickerSwitchIcon = (props) => (
+const PickerSwitchIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -20,7 +18,7 @@ export const PickerSwitchIcon = (props) => (
 );
 
 /* https://icon-sets.iconify.design/eva/arrow-ios-back-fill */
-export const PickerLeftIcon = (props) => (
+const PickerLeftIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -30,7 +28,7 @@ export const PickerLeftIcon = (props) => (
 );
 
 /* https://icon-sets.iconify.design/eva/arrow-ios-forward-fill */
-export const PickerRightIcon = (props) => (
+const PickerRightIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -40,7 +38,7 @@ export const PickerRightIcon = (props) => (
 );
 
 /* https://icon-sets.iconify.design/solar/calendar-mark-bold-duotone */
-export const PickerCalendarIcon = (props) => (
+const PickerCalendarIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -56,7 +54,7 @@ export const PickerCalendarIcon = (props) => (
 );
 
 /* https://icon-sets.iconify.design/solar/clock-circle-outline */
-export const PickerClockIcon = (props) => (
+const PickerClockIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -169,7 +167,9 @@ const MuiPickersLayout = {
           [`&:last-of-type`]: {
             color: theme.vars.palette.common.white,
             backgroundColor: theme.vars.palette.text.primary,
-            [stylesMode.dark]: { color: theme.vars.palette.grey[800] },
+            ...theme.applyStyles('dark', {
+              color: theme.vars.palette.grey[800],
+            }),
           },
         },
       },
@@ -183,7 +183,7 @@ const MuiPickersPopper = {
    *************************************** */
   styleOverrides: {
     paper: ({ theme }) => ({
-      boxShadow: theme.customShadows.dropdown,
+      boxShadow: theme.vars.customShadows.dropdown,
       borderRadius: theme.shape.borderRadius * 1.5,
     }),
   },

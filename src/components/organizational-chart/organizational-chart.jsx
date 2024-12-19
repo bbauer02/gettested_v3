@@ -3,8 +3,6 @@ import { cloneElement } from 'react';
 
 import { useTheme } from '@mui/material/styles';
 
-import { flattenArray } from 'src/utils/helper';
-
 // ----------------------------------------------------------------------
 
 const Tree = dynamic(() => import('react-organizational-chart').then((mod) => mod.Tree), {
@@ -44,7 +42,7 @@ export function OrganizationalChart({ data, nodeItem, ...other }) {
 
 // ----------------------------------------------------------------------
 
-export function TreeList({ data, depth, nodeItem }) {
+function TreeList({ data, depth, nodeItem }) {
   const childs = data.children;
 
   const cloneNode = (props) => cloneElement(nodeItem(props));
@@ -74,4 +72,19 @@ function TreeSubList({ data, depth, nodeItem }) {
       ))}
     </>
   );
+}
+
+// ----------------------------------------------------------------------
+
+function flattenArray(list, key = 'children') {
+  let children = [];
+
+  const flatten = list.map((item) => {
+    if (Array.isArray(item[key]) && item[key].length) {
+      children = [...children, ...item[key]];
+    }
+    return item;
+  });
+
+  return flatten.concat(children.length ? flattenArray(children, key) : []);
 }

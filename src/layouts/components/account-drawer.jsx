@@ -4,9 +4,8 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Drawer from '@mui/material/Drawer';
-import Tooltip from '@mui/material/Tooltip';
+import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -15,13 +14,10 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
-import { _mock } from 'src/_mock';
-import { varAlpha } from 'src/theme/styles';
-
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-import { AnimateAvatar } from 'src/components/animate';
+import { AnimateBorder } from 'src/components/animate';
 
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -59,19 +55,16 @@ export function AccountDrawer({ data = [], sx, ...other }) {
   );
 
   const renderAvatar = (
-    <AnimateAvatar
-      width={96}
+    <AnimateBorder
+      sx={{ mb: 2, p: '6px', width: 96, height: 96, borderRadius: '50%' }}
       slotProps={{
-        avatar: { src: user?.avatar, alt: user?.login },
-        overlay: {
-          border: 2,
-          spacing: 3,
-          color: `linear-gradient(135deg, ${varAlpha(theme.vars.palette.primary.mainChannel, 0)} 25%, ${theme.vars.palette.primary.main} 100%)`,
-        },
+        primaryBorder: { size: 120, sx: { color: 'primary.main' } },
       }}
     >
-      {user?.lastname?.charAt(0).toUpperCase()} {user?.firstname?.charAt(0).toUpperCase()}
-    </AnimateAvatar>
+      <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 1, height: 1 }}>
+        {user?.displayName?.charAt(0).toUpperCase()}
+      </Avatar>
+    </AnimateBorder>
   );
 
   return (
@@ -110,7 +103,6 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               {user?.email}
             </Typography>
           </Stack>
-
 
           <Stack
             sx={{

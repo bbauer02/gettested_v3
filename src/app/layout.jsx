@@ -1,16 +1,15 @@
 import 'src/global.css';
 
-// ----------------------------------------------------------------------
-
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 
-import { CONFIG } from 'src/config-global';
+import { CONFIG } from 'src/global-config';
 import { primary } from 'src/theme/core/palette';
-import { schemeConfig } from 'src/theme/scheme-config';
-import { ThemeProvider } from 'src/theme/theme-provider';
+import { themeConfig, ThemeProvider } from 'src/theme';
 
 import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
+import { detectSettings } from 'src/components/settings/server';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
@@ -33,25 +32,52 @@ export const metadata = {
   ],
 };
 
+async function getAppConfig() {
+  if (CONFIG.isStaticExport) {
+    return {
+      cookieSettings: undefined,
+      dir: defaultSettings.direction,
+    };
+  } else {
+    const [settings] = await Promise.all([detectSettings()]);
+
+    return {
+      cookieSettings: settings,
+      dir: settings.direction,
+    };
+  }
+}
+
 export default async function RootLayout({ children }) {
+  const appConfig = await getAppConfig();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" dir={appConfig.dir} suppressHydrationWarning>
       <body>
         <InitColorSchemeScript
-          defaultMode={schemeConfig.defaultMode}
-          modeStorageKey={schemeConfig.modeStorageKey}
+          defaultMode={themeConfig.defaultMode}
+          modeStorageKey={themeConfig.modeStorageKey}
+          attribute={themeConfig.cssVariables.colorSchemeSelector}
         />
 
         <AuthProvider>
-          <SettingsProvider settings={defaultSettings}>
-            <ThemeProvider>
-              <MotionLazy>
-                <Snackbar />
-                <ProgressBar />
-                <SettingsDrawer />
-                {children}
-              </MotionLazy>
-            </ThemeProvider>
+          <SettingsProvider
+            cookieSettings={appConfig.cookieSettings}
+            defaultSettings={defaultSettings}
+          >
+            <AppRouterCacheProvider options={{ key: 'css' }}>
+              <ThemeProvider
+                defaultMode={themeConfig.defaultMode}
+                modeStorageKey={themeConfig.modeStorageKey}
+              >
+                <MotionLazy>
+                  <Snackbar />
+                  <ProgressBar />
+                  <SettingsDrawer defaultSettings={defaultSettings} />
+                  {children}
+                </MotionLazy>
+              </ThemeProvider>
+            </AppRouterCacheProvider>
           </SettingsProvider>
         </AuthProvider>
       </body>

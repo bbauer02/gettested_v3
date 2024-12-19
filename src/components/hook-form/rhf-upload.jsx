@@ -1,12 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import FormHelperText from '@mui/material/FormHelperText';
+import Box from '@mui/material/Box';
 
+import { HelperText } from './help-text';
 import { Upload, UploadBox, UploadAvatar } from '../upload';
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadAvatar({ name, ...other }) {
+export function RHFUploadAvatar({ name, slotProps, ...other }) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -21,15 +22,11 @@ export function RHFUploadAvatar({ name, ...other }) {
         };
 
         return (
-          <div>
+          <Box {...slotProps?.wrapper}>
             <UploadAvatar value={field.value} error={!!error} onDrop={onDrop} {...other} />
 
-            {!!error && (
-              <FormHelperText error sx={{ px: 2, textAlign: 'center' }}>
-                {error.message}
-              </FormHelperText>
-            )}
-          </div>
+            <HelperText errorMessage={error?.message} sx={{ textAlign: 'center' }} />
+          </Box>
         );
       }}
     />

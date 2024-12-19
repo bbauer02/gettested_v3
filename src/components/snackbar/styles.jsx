@@ -1,30 +1,29 @@
 import { Toaster } from 'sonner';
+import { varAlpha } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
 
-import { varAlpha } from 'src/theme/styles';
-
-import { toasterClasses } from './classes';
+import { snackbarClasses } from './classes';
 
 // ----------------------------------------------------------------------
 
-export const StyledToaster = styled(Toaster)(({ theme }) => {
+export const SnackbarRoot = styled(Toaster)(({ theme }) => {
   const baseStyles = {
     toastDefault: {
       padding: theme.spacing(1, 1, 1, 1.5),
-      boxShadow: theme.customShadows.z8,
+      boxShadow: theme.vars.customShadows.z8,
       color: theme.vars.palette.background.paper,
       backgroundColor: theme.vars.palette.text.primary,
     },
     toastColor: {
       padding: theme.spacing(0.5, 1, 0.5, 0.5),
-      boxShadow: theme.customShadows.z8,
+      boxShadow: theme.vars.customShadows.z8,
       color: theme.vars.palette.text.primary,
       backgroundColor: theme.vars.palette.background.paper,
     },
     toastLoader: {
       padding: theme.spacing(0.5, 1, 0.5, 0.5),
-      boxShadow: theme.customShadows.z8,
+      boxShadow: theme.vars.customShadows.z8,
       color: theme.vars.palette.text.primary,
       backgroundColor: theme.vars.palette.background.paper,
     },
@@ -43,20 +42,20 @@ export const StyledToaster = styled(Toaster)(({ theme }) => {
     borderRadius: 'inherit',
     justifyContent: 'center',
     background: theme.vars.palette.background.neutral,
-    [`& .${toasterClasses.loadingIcon}`]: {
+    [`& .${snackbarClasses.loadingIcon}`]: {
       zIndex: 9,
       width: 24,
       height: 24,
       borderRadius: '50%',
       animation: 'rotate 3s infinite linear',
-      background: `conic-gradient(${varAlpha(theme.vars.palette.text.primaryChannel, 0)}, ${varAlpha(theme.vars.palette.text.disabledChannel, 0.64)})`,
+      background: `conic-gradient(transparent, ${varAlpha(theme.vars.palette.text.disabledChannel, 0.64)})`,
     },
-    [toasterClasses.loaderVisible]: { display: 'flex' },
+    [snackbarClasses.loaderVisible]: { display: 'flex' },
   };
 
   return {
     width: 300,
-    [`& .${toasterClasses.toast}`]: {
+    [`& .${snackbarClasses.toast}`]: {
       gap: 12,
       width: '100%',
       minHeight: 52,
@@ -64,26 +63,18 @@ export const StyledToaster = styled(Toaster)(({ theme }) => {
       borderRadius: 12,
       alignItems: 'center',
     },
-    /*
+    /**
      * Content
      */
-    [`& .${toasterClasses.content}`]: {
-      gap: 0,
-      flex: '1 1 auto',
-    },
-    [`& .${toasterClasses.title}`]: {
-      fontSize: theme.typography.subtitle2.fontSize,
-    },
-    [`& .${toasterClasses.description}`]: {
-      ...theme.typography.caption,
-      opacity: 0.64,
-    },
-    /*
+    [`& .${snackbarClasses.content}`]: { gap: 0, flex: '1 1 auto' },
+    [`& .${snackbarClasses.title}`]: { fontSize: theme.typography.subtitle2.fontSize },
+    [`& .${snackbarClasses.description}`]: { ...theme.typography.caption, opacity: 0.64 },
+    /**
      * Buttons
      */
-    [`& .${toasterClasses.actionButton}`]: {},
-    [`& .${toasterClasses.cancelButton}`]: {},
-    [`& .${toasterClasses.closeButton}`]: {
+    [`& .${snackbarClasses.actionButton}`]: {},
+    [`& .${snackbarClasses.cancelButton}`]: {},
+    [`& .${snackbarClasses.closeButton}`]: {
       top: 0,
       right: 0,
       left: 'auto',
@@ -97,10 +88,10 @@ export const StyledToaster = styled(Toaster)(({ theme }) => {
         backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
       },
     },
-    /*
+    /**
      * Icon
      */
-    [`& .${toasterClasses.icon}`]: {
+    [`& .${snackbarClasses.icon}`]: {
       margin: 0,
       width: 48,
       height: 48,
@@ -108,68 +99,62 @@ export const StyledToaster = styled(Toaster)(({ theme }) => {
       borderRadius: 'inherit',
       justifyContent: 'center',
       alignSelf: 'flex-start',
-      [`& .${toasterClasses.iconSvg}`]: {
-        width: 24,
-        height: 24,
-        fontSize: 0,
-      },
+      [`& .${snackbarClasses.iconSvg}`]: { width: 24, height: 24, fontSize: 0 },
     },
 
-    /*
-     * Default
-     */
     '@keyframes rotate': { to: { transform: 'rotate(1turn)' } },
 
-    [`& .${toasterClasses.default}`]: {
-      ...baseStyles.toastDefault,
-      [`&:has(${toasterClasses.closeBtnVisible})`]: {
-        [`& .${toasterClasses.content}`]: {
-          paddingRight: 32,
-        },
-      },
-      [`&:has(.${toasterClasses.loader})`]: baseStyles.toastLoader,
-      /*
-       * With loader
-       */
-      [`&:has(.${toasterClasses.loader})`]: baseStyles.toastLoader,
-      [`& .${toasterClasses.loader}`]: loadingStyles,
-    },
-    /*
-     * Error
+    /**
+     * @variant default
      */
-    [`& .${toasterClasses.error}`]: {
+    [`& .${snackbarClasses.default}`]: {
+      ...baseStyles.toastDefault,
+      [`&:has(${snackbarClasses.closeBtnVisible})`]: {
+        [`& .${snackbarClasses.content}`]: { paddingRight: 32 },
+      },
+      [`&:has(.${snackbarClasses.loader})`]: baseStyles.toastLoader,
+      /**
+       * @with loader
+       */
+      [`&:has(.${snackbarClasses.loader})`]: baseStyles.toastLoader,
+      [`& .${snackbarClasses.loader}`]: loadingStyles,
+    },
+    /**
+     * @variant error
+     */
+    [`& .${snackbarClasses.error}`]: {
       ...baseStyles.toastColor,
-      [`& .${toasterClasses.icon}`]: {
+      [`& .${snackbarClasses.icon}`]: {
         color: theme.vars.palette.error.main,
         backgroundColor: varAlpha(theme.vars.palette.error.mainChannel, 0.08),
       },
     },
-    /*
-     * Success
+    /**
+     * @variant success
      */
-    [`& .${toasterClasses.success}`]: {
+    [`& .${snackbarClasses.success}`]: {
       ...baseStyles.toastColor,
-      [`& .${toasterClasses.icon}`]: {
+      [`& .${snackbarClasses.icon}`]: {
         color: theme.vars.palette.success.main,
         backgroundColor: varAlpha(theme.vars.palette.success.mainChannel, 0.08),
       },
     },
-    /*
-     * Warning
+    /**
+     * @variant warning
      */
-    [`& .${toasterClasses.warning}`]: {
+    [`& .${snackbarClasses.warning}`]: {
       ...baseStyles.toastColor,
-      [`& .${toasterClasses.icon}`]: {
+      [`& .${snackbarClasses.icon}`]: {
         color: theme.vars.palette.warning.main,
         backgroundColor: varAlpha(theme.vars.palette.warning.mainChannel, 0.08),
       },
     },
-    /*
-     * Info
+    /**
+     * @variant info
      */
-    [`& .${toasterClasses.info}`]: {
+    [`& .${snackbarClasses.info}`]: {
       ...baseStyles.toastColor,
-      [`& .${toasterClasses.icon}`]: {
+      [`& .${snackbarClasses.icon}`]: {
         color: theme.vars.palette.info.main,
         backgroundColor: varAlpha(theme.vars.palette.info.mainChannel, 0.08),
       },

@@ -1,6 +1,8 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import { fabClasses } from '@mui/material/Fab';
 
-import { varAlpha, stylesMode } from '../../styles';
+// ----------------------------------------------------------------------
 
 const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'];
 
@@ -19,7 +21,7 @@ const filledVariant = {
       FILLED_VARIANT.includes(ownerState.variant) &&
       ownerState.color === color,
     style: ({ theme }) => ({
-      boxShadow: theme.customShadows[color],
+      boxShadow: theme.vars.customShadows[color],
       '&:hover': { boxShadow: 'none' },
     }),
   })),
@@ -28,7 +30,7 @@ const filledVariant = {
       props: ({ ownerState }) =>
         FILLED_VARIANT.includes(ownerState.variant) && DEFAULT_COLORS.includes(ownerState.color),
       style: ({ theme }) => ({
-        boxShadow: theme.customShadows.z8,
+        boxShadow: theme.vars.customShadows.z8,
         /**
          * @color default
          */
@@ -42,10 +44,10 @@ const filledVariant = {
           color: theme.vars.palette.common.white,
           backgroundColor: theme.vars.palette.text.primary,
           '&:hover': { backgroundColor: theme.vars.palette.grey[700] },
-          [stylesMode.dark]: {
+          ...theme.applyStyles('dark', {
             color: theme.vars.palette.grey[800],
             '&:hover': { backgroundColor: theme.vars.palette.grey[400] },
-          },
+          }),
         },
       }),
     },
@@ -101,7 +103,9 @@ const softVariant = {
         boxShadow: 'none',
         backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.32),
       },
-      [stylesMode.dark]: { color: theme.vars.palette[color].light },
+      ...theme.applyStyles('dark', {
+        color: theme.vars.palette[color].light,
+      }),
     }),
   })),
   base: [
@@ -158,31 +162,25 @@ const MuiFab = {
   defaultProps: { color: 'primary' },
 
   /** **************************************
-   * VARIANTS
-   *************************************** */
-  variants: [
-    /**
-     * @variant filled
-     */
-    ...[...filledVariant.base, ...filledVariant.colors],
-    /**
-     * @variant outlined
-     */
-    ...[...outlinedVariant.base, ...outlinedVariant.colors],
-    /**
-     * @variant soft
-     */
-    ...[...softVariant.base, ...softVariant.colors],
-    /**
-     * @sizes
-     */
-    ...sizes,
-  ],
-
-  /** **************************************
    * STYLE
    *************************************** */
-  styleOverrides: {},
+  styleOverrides: {
+    root: {
+      variants: [
+        // @variant: filled
+        filledVariant.base,
+        filledVariant.colors,
+        // @variant: outlined
+        outlinedVariant.base,
+        outlinedVariant.colors,
+        // @variant: soft
+        softVariant.base,
+        softVariant.colors,
+        // @sizes
+        sizes,
+      ].flat(),
+    },
+  },
 };
 
 // ----------------------------------------------------------------------

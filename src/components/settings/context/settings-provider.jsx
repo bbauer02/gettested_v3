@@ -1,26 +1,25 @@
 'use client';
 
-import { useMemo, useState, useCallback, createContext } from 'react';
+import { isEqual } from 'es-toolkit';
+import { useMemo, useState, useCallback } from 'react';
+import { useCookies, useLocalStorage } from 'minimal-shared/hooks';
 
-import { useCookies } from 'src/hooks/use-cookies';
-import { useLocalStorage } from 'src/hooks/use-local-storage';
-
-import { STORAGE_KEY, defaultSettings } from '../config-settings';
-
-// ----------------------------------------------------------------------
-
-export const SettingsContext = createContext(undefined);
-
-export const SettingsConsumer = SettingsContext.Consumer;
+import { SettingsContext } from './settings-context';
+import { SETTINGS_STORAGE_KEY } from '../settings-config';
 
 // ----------------------------------------------------------------------
 
-export function SettingsProvider({ children, settings, caches = 'localStorage' }) {
-  const cookies = useCookies(STORAGE_KEY, settings, defaultSettings);
+export function SettingsProvider({
+  children,
+  cookieSettings,
+  defaultSettings,
+  storageKey = SETTINGS_STORAGE_KEY,
+}) {
+  const isCookieEnabled = !!cookieSettings;
+  const useStorage = isCookieEnabled ? useCookies : useLocalStorage;
+  const initialSettings = isCookieEnabled ? cookieSettings : defaultSettings;
 
-  const localStorage = useLocalStorage(STORAGE_KEY, settings);
-
-  const values = caches === 'cookie' ? cookies : localStorage;
+  const { state, setState, resetState, setField } = useStorage(storageKey, initialSettings);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -32,27 +31,24 @@ export function SettingsProvider({ children, settings, caches = 'localStorage' }
     setOpenDrawer(false);
   }, []);
 
+  const canReset = !isEqual(state, defaultSettings);
+
+  const onReset = useCallback(() => {
+    resetState(defaultSettings);
+  }, [defaultSettings, resetState]);
+
   const memoizedValue = useMemo(
     () => ({
-      ...values.state,
-      canReset: values.canReset,
-      onReset: values.resetState,
-      onUpdate: values.setState,
-      onUpdateField: values.setField,
+      canReset,
+      onReset,
       openDrawer,
       onCloseDrawer,
       onToggleDrawer,
+      state,
+      setState,
+      setField,
     }),
-    [
-      values.state,
-      values.setField,
-      values.setState,
-      values.canReset,
-      values.resetState,
-      openDrawer,
-      onCloseDrawer,
-      onToggleDrawer,
-    ]
+    [canReset, onReset, openDrawer, onCloseDrawer, onToggleDrawer, state, setField, setState]
   );
 
   return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>;

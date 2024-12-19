@@ -2,11 +2,21 @@
 
 const MuiDialog = {
   /** **************************************
+   * DEFAULT PROPS
+   *************************************** */
+  defaultProps: {
+    /**
+     * TODO: Should be removed in MUI next.
+     * @see https://github.com/mui/material-ui/issues/43106
+     */
+    closeAfterTransition: false,
+  },
+  /** **************************************
    * STYLE
    *************************************** */
   styleOverrides: {
     paper: ({ ownerState, theme }) => ({
-      boxShadow: theme.customShadows.dialog,
+      boxShadow: theme.vars.customShadows.dialog,
       borderRadius: theme.shape.borderRadius * 2,
       ...(!ownerState.fullScreen && { margin: theme.spacing(2) }),
     }),

@@ -1,6 +1,7 @@
 'use client';
 
 import { m } from 'framer-motion';
+import { usePopover } from 'minimal-shared/hooks';
 
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
@@ -12,27 +13,58 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { fToNow } from 'src/utils/format-time';
 
-import { varHover } from 'src/components/animate';
 import { Scrollbar } from 'src/components/scrollbar';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { CustomPopover } from 'src/components/custom-popover';
+import { varTap, varHover, transitionTap } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
 export function ContactsPopover({ data = [], sx, ...other }) {
-  const popover = usePopover();
+  const { open, anchorEl, onClose, onOpen } = usePopover();
+
+  const renderMenuList = () => (
+    <CustomPopover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      slotProps={{ arrow: { offset: 20 } }}
+    >
+      <Typography variant="h6" sx={{ p: 1.5 }}>
+        Contacts <span>({data.length})</span>
+      </Typography>
+
+      <Scrollbar sx={{ height: 320, width: 320 }}>
+        {data.map((contact) => (
+          <MenuItem key={contact.id} sx={{ p: 1 }}>
+            <Badge variant={contact.status}>
+              <Avatar alt={contact.name} src={contact.avatarUrl} />
+            </Badge>
+
+            <ListItemText
+              primary={contact.name}
+              secondary={contact.status === 'offline' ? fToNow(contact.lastActivity) : ''}
+              primaryTypographyProps={{ typography: 'subtitle2' }}
+              secondaryTypographyProps={{ typography: 'caption', color: 'text.disabled' }}
+            />
+          </MenuItem>
+        ))}
+      </Scrollbar>
+    </CustomPopover>
+  );
 
   return (
     <>
       <IconButton
         component={m.button}
-        whileTap="tap"
-        whileHover="hover"
-        variants={varHover(1.05)}
-        onClick={popover.onOpen}
-        sx={{
-          ...(popover.open && { bgcolor: (theme) => theme.vars.palette.action.selected }),
-          ...sx,
-        }}
+        whileTap={varTap(0.96)}
+        whileHover={varHover(1.04)}
+        transition={transitionTap()}
+        aria-label="Contacts button"
+        onClick={onOpen}
+        sx={[
+          (theme) => ({ ...(open && { bgcolor: theme.vars.palette.action.selected }) }),
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
         {...other}
       >
         <SvgIcon>
@@ -44,39 +76,7 @@ export function ContactsPopover({ data = [], sx, ...other }) {
         </SvgIcon>
       </IconButton>
 
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{
-          arrow: { offset: 20 },
-        }}
-      >
-        <Typography variant="h6" sx={{ p: 1.5 }}>
-          Contacts <span>({data.length})</span>
-        </Typography>
-
-        <Scrollbar sx={{ height: 320, width: 320 }}>
-          {data.map((contact) => (
-            <MenuItem key={contact.id} sx={{ p: 1 }}>
-              <Badge
-                variant={contact.status}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                sx={{ mr: 2 }}
-              >
-                <Avatar alt={contact.name} src={contact.avatarUrl} />
-              </Badge>
-
-              <ListItemText
-                primary={contact.name}
-                secondary={contact.status === 'offline' ? fToNow(contact.lastActivity) : ''}
-                primaryTypographyProps={{ typography: 'subtitle2' }}
-                secondaryTypographyProps={{ typography: 'caption', color: 'text.disabled' }}
-              />
-            </MenuItem>
-          ))}
-        </Scrollbar>
-      </CustomPopover>
+      {renderMenuList()}
     </>
   );
 }

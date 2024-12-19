@@ -4,20 +4,20 @@ import { useMemo } from 'react';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
+import { mergeClasses, isExternalLink } from 'minimal-shared/utils';
 
 import Link from '@mui/material/Link';
 
-import { isExternalLink } from 'src/routes/utils';
 import { RouterLink } from 'src/routes/components';
 
 import { Image } from '../image';
-import { StyledRoot } from './styles';
+import { MarkdownRoot } from './styles';
 import { markdownClasses } from './classes';
 import { htmlToMarkdown, isMarkdownContent } from './html-to-markdown';
 
 // ----------------------------------------------------------------------
 
-export function Markdown({ children, sx, ...other }) {
+export function Markdown({ children, sx, className, ...other }) {
   const content = useMemo(() => {
     if (isMarkdownContent(`${children}`)) {
       return children;
@@ -26,15 +26,15 @@ export function Markdown({ children, sx, ...other }) {
   }, [children]);
 
   return (
-    <StyledRoot
+    <MarkdownRoot
       children={content}
       components={components}
       rehypePlugins={rehypePlugins}
       /* base64-encoded images
        * https://github.com/remarkjs/react-markdown/issues/774
-       * urlTransform={(value: string) => value}
+       * urlTransform={(value) => value}
        */
-      className={markdownClasses.root}
+      className={mergeClasses([markdownClasses.root, className])}
       sx={sx}
       {...other}
     />
@@ -52,7 +52,7 @@ const components = {
       {...other}
     />
   ),
-  a: ({ href, children, ...other }) => {
+  a: ({ href, children, node, ...other }) => {
     const linkProps = isExternalLink(href)
       ? { target: '_blank', rel: 'noopener' }
       : { component: RouterLink };
@@ -68,7 +68,7 @@ const components = {
       <pre>{children}</pre>
     </div>
   ),
-  code({ className, children, ...other }) {
+  code({ className, children, node, ...other }) {
     const language = /language-(\w+)/.exec(className || '');
 
     return language ? (

@@ -1,10 +1,12 @@
-import { toggleButtonClasses } from '@mui/material/ToggleButton';
+import { varAlpha } from 'minimal-shared/utils';
 
-import { varAlpha } from '../../styles';
+import { toggleButtonClasses } from '@mui/material/ToggleButton';
 
 // ----------------------------------------------------------------------
 
 const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'];
+
+// ----------------------------------------------------------------------
 
 function styleColors(ownerState, styles) {
   const outputStyle = COLORS.reduce((acc, color) => {
@@ -52,7 +54,12 @@ const MuiToggleButton = {
         },
       };
 
-      return { ...styled.colors, ...styled.selected, ...styled.disabled };
+      return {
+        fontWeight: theme.typography.fontWeightSemiBold,
+        ...styled.colors,
+        ...styled.selected,
+        ...styled.disabled,
+      };
     },
   },
 };

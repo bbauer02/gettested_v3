@@ -1,9 +1,9 @@
 'use client';
 
-import axios, { endpoints } from 'src/utils/axios';
+import axios, { endpoints } from 'src/lib/axios';
 
 import { setSession } from './utils';
-import {STORAGE_KEY} from './constant';
+import { STORAGE_KEY } from './constant';
 
 /** **************************************
  * Sign in

@@ -5,43 +5,44 @@ import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControlLabel from '@mui/material/FormControlLabel';
+
+import { HelperText } from './help-text';
 
 // ----------------------------------------------------------------------
 
-export function RHFCheckbox({ name, helperText, label, slotProps, ...other }) {
+export function RHFCheckbox({ sx, name, label, slotProps, helperText, ...other }) {
   const { control } = useFormContext();
-
-  const ariaLabel = `Checkbox ${name}`;
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <Box sx={slotProps?.wrap}>
+        <Box {...slotProps?.wrapper}>
           <FormControlLabel
+            label={label}
             control={
               <Checkbox
                 {...field}
                 checked={field.value}
                 {...slotProps?.checkbox}
                 inputProps={{
-                  ...(!label && { 'aria-label': ariaLabel }),
+                  id: `${name}-checkbox`,
+                  ...(!label && { 'aria-label': `${name} checkbox` }),
                   ...slotProps?.checkbox?.inputProps,
                 }}
               />
             }
-            label={label}
+            sx={[{ mx: 0 }, ...(Array.isArray(sx) ? (sx ?? []) : [sx])]}
             {...other}
           />
 
-          {(!!error || helperText) && (
-            <FormHelperText error={!!error} {...slotProps?.formHelperText}>
-              {error ? error?.message : helperText}
-            </FormHelperText>
-          )}
+          <HelperText
+            {...slotProps?.helperText}
+            errorMessage={error?.message}
+            helperText={helperText}
+          />
         </Box>
       )}
     />
@@ -58,20 +59,22 @@ export function RHFMultiCheckbox({ name, label, options, slotProps, helperText, 
       ? selectedItems.filter((value) => value !== item)
       : [...selectedItems, item];
 
-  const accessibility = (val) => val;
-  const ariaLabel = (val) => `Checkbox ${val}`;
-
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl component="fieldset" sx={slotProps?.wrap}>
+        <FormControl component="fieldset" {...slotProps?.wrapper}>
           {label && (
             <FormLabel
               component="legend"
               {...slotProps?.formLabel}
-              sx={{ mb: 1, typography: 'body2', ...slotProps?.formLabel?.sx }}
+              sx={[
+                { mb: 1, typography: 'body2' },
+                ...(Array.isArray(slotProps?.formLabel?.sx)
+                  ? (slotProps?.formLabel?.sx ?? [])
+                  : [slotProps?.formLabel?.sx]),
+              ]}
             >
               {label}
             </FormLabel>
@@ -85,10 +88,10 @@ export function RHFMultiCheckbox({ name, label, options, slotProps, helperText, 
                   <Checkbox
                     checked={field.value.includes(option.value)}
                     onChange={() => field.onChange(getSelected(field.value, option.value))}
-                    name={accessibility(option.label)}
                     {...slotProps?.checkbox}
                     inputProps={{
-                      ...(!option.label && { 'aria-label': ariaLabel(option.label) }),
+                      id: `${option.label}-checkbox`,
+                      ...(!option.label && { 'aria-label': `${option.label} checkbox` }),
                       ...slotProps?.checkbox?.inputProps,
                     }}
                   />
@@ -98,11 +101,12 @@ export function RHFMultiCheckbox({ name, label, options, slotProps, helperText, 
             ))}
           </FormGroup>
 
-          {(!!error || helperText) && (
-            <FormHelperText error={!!error} sx={{ mx: 0 }} {...slotProps?.formHelperText}>
-              {error ? error?.message : helperText}
-            </FormHelperText>
-          )}
+          <HelperText
+            {...slotProps?.helperText}
+            disableGutters
+            errorMessage={error?.message}
+            helperText={helperText}
+          />
         </FormControl>
       )}
     />

@@ -6,11 +6,7 @@ const MuiTabs = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */
-  defaultProps: {
-    textColor: 'inherit',
-    variant: 'scrollable',
-    allowScrollButtonsMobile: true,
-  },
+  defaultProps: { textColor: 'inherit', variant: 'scrollable', allowScrollButtonsMobile: true },
 
   /** **************************************
    * STYLE
@@ -19,9 +15,7 @@ const MuiTabs = {
     flexContainer: ({ ownerState, theme }) => ({
       ...(ownerState.variant !== 'fullWidth' && {
         gap: '24px',
-        [theme.breakpoints.up('sm')]: {
-          gap: '40px',
-        },
+        [theme.breakpoints.up('sm')]: { gap: '40px' },
       }),
     }),
     indicator: { backgroundColor: 'currentColor' },

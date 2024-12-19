@@ -1,4 +1,4 @@
-import { varAlpha } from '../../styles';
+import { varAlpha } from 'minimal-shared/utils';
 
 // ----------------------------------------------------------------------
 

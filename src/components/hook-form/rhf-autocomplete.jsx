@@ -5,8 +5,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 // ----------------------------------------------------------------------
 
-export function RHFAutocomplete({ name, label, variant, helperText, placeholder, ...other }) {
+export function RHFAutocomplete({ name, label, slotProps, helperText, placeholder, ...other }) {
   const { control, setValue } = useFormContext();
+
+  const { textfield, ...otherSlotProps } = slotProps ?? {};
 
   return (
     <Controller
@@ -20,18 +22,23 @@ export function RHFAutocomplete({ name, label, variant, helperText, placeholder,
           renderInput={(params) => (
             <TextField
               {...params}
+              {...textfield}
               label={label}
               placeholder={placeholder}
-              variant={variant}
               error={!!error}
-              helperText={error ? error?.message : helperText}
-              inputProps={{
-                ...params.inputProps,
-                autoComplete: 'new-password',
+              helperText={error?.message ?? helperText}
+              slotProps={{
+                ...textfield?.slotProps,
+                htmlInput: {
+                  ...params.inputProps,
+                  autoComplete: 'new-password',
+                  ...textfield?.slotProps?.htmlInput,
+                },
               }}
             />
           )}
           {...other}
+          {...otherSlotProps}
         />
       )}
     />

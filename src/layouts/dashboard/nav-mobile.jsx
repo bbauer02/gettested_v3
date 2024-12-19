@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
+import { mergeClasses } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
-import Drawer, { drawerClasses } from '@mui/material/Drawer';
+import Drawer from '@mui/material/Drawer';
 
 import { usePathname } from 'src/routes/hooks';
 
@@ -9,11 +10,12 @@ import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { NavSectionVertical } from 'src/components/nav-section';
 
+import { layoutClasses } from '../core/classes';
 import { NavUpgrade } from '../components/nav-upgrade';
 
 // ----------------------------------------------------------------------
 
-export function NavMobile({ data, open, onClose, slots, sx, ...other }) {
+export function NavMobile({ data, open, onClose, slots, sx, className, ...other }) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -27,13 +29,16 @@ export function NavMobile({ data, open, onClose, slots, sx, ...other }) {
     <Drawer
       open={open}
       onClose={onClose}
-      sx={{
-        [`& .${drawerClasses.paper}`]: {
-          overflow: 'unset',
-          bgcolor: 'var(--layout-nav-bg)',
-          width: 'var(--layout-nav-mobile-width)',
-          ...sx,
-        },
+      PaperProps={{
+        className: mergeClasses([layoutClasses.nav.root, layoutClasses.nav.vertical, className]),
+        sx: [
+          (theme) => ({
+            overflow: 'unset',
+            bgcolor: 'var(--layout-nav-bg)',
+            width: 'var(--layout-nav-mobile-width)',
+          }),
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ],
       }}
     >
       {slots?.topArea ?? (

@@ -1,12 +1,31 @@
-import { setFont, pxToRem, responsiveFontSizes } from '../styles/utils';
+import { pxToRem, setFont } from 'minimal-shared/utils';
+
+import { createTheme as getTheme } from '@mui/material/styles';
+
+import { themeConfig } from '../theme-config';
 
 // ----------------------------------------------------------------------
 
-export const defaultFont = 'Public Sans Variable';
+const defaultMuiTheme = getTheme();
 
-export const primaryFont = setFont(defaultFont);
+function responsiveFontSizes(obj) {
+  const breakpoints = defaultMuiTheme.breakpoints.keys;
 
-export const secondaryFont = setFont('Barlow');
+  return breakpoints.reduce((acc, breakpoint) => {
+    const value = obj[breakpoint];
+
+    if (value !== undefined && value >= 0) {
+      acc[defaultMuiTheme.breakpoints.up(breakpoint)] = {
+        fontSize: pxToRem(value),
+      };
+    }
+
+    return acc;
+  }, {});
+}
+
+const primaryFont = setFont(themeConfig.fontFamily.primary);
+const secondaryFont = setFont(themeConfig.fontFamily.secondary);
 
 // ----------------------------------------------------------------------
 
@@ -19,43 +38,43 @@ export const typography = {
   fontWeightSemiBold: '600',
   fontWeightBold: '700',
   h1: {
+    fontFamily: secondaryFont,
     fontWeight: 800,
     lineHeight: 80 / 64,
     fontSize: pxToRem(40),
-    fontFamily: secondaryFont,
     ...responsiveFontSizes({ sm: 52, md: 58, lg: 64 }),
   },
   h2: {
+    fontFamily: secondaryFont,
     fontWeight: 800,
     lineHeight: 64 / 48,
     fontSize: pxToRem(32),
-    fontFamily: secondaryFont,
     ...responsiveFontSizes({ sm: 40, md: 44, lg: 48 }),
   },
   h3: {
+    fontFamily: secondaryFont,
     fontWeight: 700,
     lineHeight: 1.5,
     fontSize: pxToRem(24),
-    fontFamily: secondaryFont,
     ...responsiveFontSizes({ sm: 26, md: 30, lg: 32 }),
   },
   h4: {
     fontWeight: 700,
     lineHeight: 1.5,
     fontSize: pxToRem(20),
-    ...responsiveFontSizes({ sm: 20, md: 24, lg: 24 }),
+    ...responsiveFontSizes({ md: 24 }),
   },
   h5: {
     fontWeight: 700,
     lineHeight: 1.5,
     fontSize: pxToRem(18),
-    ...responsiveFontSizes({ sm: 19, md: 20, lg: 20 }),
+    ...responsiveFontSizes({ sm: 19 }),
   },
   h6: {
     fontWeight: 600,
     lineHeight: 28 / 18,
     fontSize: pxToRem(17),
-    ...responsiveFontSizes({ sm: 18, md: 18, lg: 18 }),
+    ...responsiveFontSizes({ sm: 18 }),
   },
   subtitle1: {
     fontWeight: 600,

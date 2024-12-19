@@ -1,4 +1,4 @@
-import { CONFIG } from 'src/config-global';
+import { CONFIG } from 'src/global-config';
 
 import { QuestionCreateView } from 'src/sections/question/view';
 

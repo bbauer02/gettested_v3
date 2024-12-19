@@ -12,13 +12,41 @@ export function emptyRows(page, rowsPerPage, arrayLength) {
 
 // ----------------------------------------------------------------------
 
+/**
+ * @example
+ * const data = {
+ *   calories: 360,
+ *   align: 'center',
+ *   more: {
+ *     protein: 42,
+ *   },
+ * };
+ *
+ * const ex1 = getNestedProperty(data, 'calories');
+ * console.log('ex1', ex1); // output: 360
+ *
+ * const ex2 = getNestedProperty(data, 'align');
+ * console.log('ex2', ex2); // output: center
+ *
+ * const ex3 = getNestedProperty(data, 'more.protein');
+ * console.log('ex3', ex3); // output: 42
+ */
+function getNestedProperty(obj, key) {
+  return key.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  const aValue = getNestedProperty(a, orderBy);
+  const bValue = getNestedProperty(b, orderBy);
+
+  if (bValue < aValue) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+
+  if (bValue > aValue) {
     return 1;
   }
+
   return 0;
 }
 

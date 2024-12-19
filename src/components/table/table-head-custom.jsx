@@ -9,10 +9,10 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 const visuallyHidden = {
   border: 0,
-  margin: -1,
   padding: 0,
   width: '1px',
   height: '1px',
+  margin: '-1px',
   overflow: 'hidden',
   position: 'absolute',
   whiteSpace: 'nowrap',
@@ -26,7 +26,7 @@ export function TableHeadCustom({
   order,
   onSort,
   orderBy,
-  headLabel,
+  headCells,
   rowCount = 0,
   numSelected = 0,
   onSelectAllRows,
@@ -41,19 +41,22 @@ export function TableHeadCustom({
               checked={!!rowCount && numSelected === rowCount}
               onChange={(event) => onSelectAllRows(event.target.checked)}
               inputProps={{
-                name: 'select-all-rows',
-                'aria-label': 'select all rows',
+                id: `all-row-checkbox`,
+                'aria-label': `All row Checkbox`,
               }}
             />
           </TableCell>
         )}
 
-        {headLabel.map((headCell) => (
+        {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth }}
+            sx={[
+              { width: headCell.width },
+              ...(Array.isArray(headCell.sx) ? headCell.sx : [headCell.sx]),
+            ]}
           >
             {onSort ? (
               <TableSortLabel
@@ -65,7 +68,7 @@ export function TableHeadCustom({
                 {headCell.label}
 
                 {orderBy === headCell.id ? (
-                  <Box sx={{ ...visuallyHidden }}>
+                  <Box component="span" sx={visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}

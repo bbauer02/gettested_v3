@@ -2,15 +2,14 @@
 
 import i18next from 'i18next';
 import { useMemo } from 'react';
+import { getStorage } from 'minimal-shared/utils';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next, I18nextProvider as Provider } from 'react-i18next';
 
-import { localStorageGetItem } from 'src/utils/storage-available';
+import { CONFIG } from 'src/global-config';
 
-import { CONFIG } from 'src/config-global';
-
-import { i18nOptions, fallbackLng } from './config-locales';
+import { i18nOptions, fallbackLng } from './locales-config';
 
 // ----------------------------------------------------------------------
 
@@ -19,10 +18,10 @@ let lng;
 /**
  * [1] localStorage
  * Auto detection:
- * const lng = localStorageGetItem('i18nextLng')
+ * const lng = getStorage('i18nextLng')
  */
 if (CONFIG.isStaticExport) {
-  lng = localStorageGetItem('i18nextLng', fallbackLng);
+  lng = getStorage('i18nextLng', fallbackLng);
 }
 
 const init = CONFIG.isStaticExport

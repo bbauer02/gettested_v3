@@ -1,25 +1,25 @@
-import { varTranExit, varTranEnter } from './transition';
+import { transitionExit, transitionEnter } from './transition';
 
 // ----------------------------------------------------------------------
 
-export const varRotate = (props) => {
-  const durationIn = props?.durationIn;
-  const durationOut = props?.durationOut;
-  const easeIn = props?.easeIn;
-  const easeOut = props?.easeOut;
+export const varRotate = (direction, options) => {
+  const deg = options?.deg || 360;
+  const transitionIn = options?.transitionIn;
+  const transitionOut = options?.transitionOut;
 
-  return {
-    // IN
+  const variants = {
+    /**** In ****/
     in: {
-      initial: { opacity: 0, rotate: -360 },
-      animate: { opacity: 1, rotate: 0, transition: varTranEnter({ durationIn, easeIn }) },
-      exit: { opacity: 0, rotate: -360, transition: varTranExit({ durationOut, easeOut }) },
+      initial: { opacity: 0, rotate: -deg },
+      animate: { opacity: 1, rotate: 0, transition: transitionEnter(transitionIn) },
+      exit: { opacity: 0, rotate: -deg, transition: transitionExit(transitionOut) },
     },
-
-    // OUT
+    /**** Out ****/
     out: {
       initial: { opacity: 1, rotate: 0 },
-      animate: { opacity: 0, rotate: -360, transition: varTranExit({ durationOut, easeOut }) },
+      animate: { opacity: 0, rotate: -deg, transition: transitionExit(transitionOut) },
     },
   };
+
+  return variants[direction];
 };

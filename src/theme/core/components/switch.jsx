@@ -1,6 +1,6 @@
-import { switchClasses } from '@mui/material/Switch';
+import { varAlpha } from 'minimal-shared/utils';
 
-import { varAlpha, stylesMode } from '../../styles';
+import { switchClasses } from '@mui/material/Switch';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,9 @@ const MuiSwitch = {
       [`&.${switchClasses.checked}`]: {
         [`& .${switchClasses.thumb}`]: {
           ...(ownerState.color === 'default' && {
-            [stylesMode.dark]: { color: theme.vars.palette.grey[800] },
+            ...theme.applyStyles('dark', {
+              color: theme.vars.palette.grey[800],
+            }),
           }),
         },
         [`&+.${switchClasses.track}`]: {
@@ -27,7 +29,12 @@ const MuiSwitch = {
         },
       },
       [`&.${switchClasses.disabled}`]: {
-        [`& .${switchClasses.thumb}`]: { opacity: 1, [stylesMode.dark]: { opacity: 0.48 } },
+        [`& .${switchClasses.thumb}`]: {
+          opacity: 1,
+          ...theme.applyStyles('dark', {
+            opacity: 0.48,
+          }),
+        },
         [`&+.${switchClasses.track}`]: { opacity: 0.48 },
       },
     }),

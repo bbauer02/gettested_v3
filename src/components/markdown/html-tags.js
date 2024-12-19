@@ -2,6 +2,8 @@
  * https://github.com/harrysolovay/all-html-tags
  */
 
+// ----------------------------------------------------------------------
+
 export const htmlTags = [
   'a',
   'abbr',

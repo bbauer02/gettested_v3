@@ -5,7 +5,7 @@ import { PhoneInput } from '../phone-input';
 // ----------------------------------------------------------------------
 
 export function RHFPhoneInput({ name, helperText, ...other }) {
-  const { control, setValue } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Controller
@@ -15,10 +15,8 @@ export function RHFPhoneInput({ name, helperText, ...other }) {
         <PhoneInput
           {...field}
           fullWidth
-          value={field.value}
-          onChange={(newValue) => setValue(name, newValue, { shouldValidate: true })}
           error={!!error}
-          helperText={error ? error?.message : helperText}
+          helperText={error?.message ?? helperText}
           {...other}
         />
       )}

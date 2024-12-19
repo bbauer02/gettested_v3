@@ -1,5 +1,6 @@
-import { useState, forwardRef, useCallback } from 'react';
+import { parsePhoneNumber } from 'react-phone-number-input';
 import PhoneNumberInput from 'react-phone-number-input/input';
+import { useState, useEffect, forwardRef, useCallback, startTransition } from 'react';
 
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -7,91 +8,105 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { inputBaseClasses } from '@mui/material/InputBase';
 
+import { countries } from 'src/assets/data/countries';
+
 import { Iconify } from '../iconify';
-import { getCountryCode } from './utils';
-import { CountryListPopover } from './list';
+import { CountryListPopover } from './list-popover';
 
 // ----------------------------------------------------------------------
 
-export const PhoneInput = forwardRef(
-  (
-    {
-      sx,
-      size,
-      value,
-      label,
-      onChange,
-      placeholder,
-      disableSelect,
-      variant = 'outlined',
-      country: inputCountryCode,
-      ...other
-    },
-    ref
-  ) => {
-    const defaultCountryCode = getCountryCode(value, inputCountryCode);
+export const PhoneInput = forwardRef((props, ref) => {
+  const {
+    sx,
+    size,
+    value,
+    label,
+    onChange,
+    placeholder,
+    disableSelect,
+    variant = 'outlined',
+    country: inputCountryCode,
+    ...other
+  } = props;
 
-    const [searchCountry, setSearchCountry] = useState('');
+  const defaultCountryCode = getCountryCode(value, inputCountryCode);
 
-    const [selectedCountry, setSelectedCountry] = useState(defaultCountryCode);
+  const [searchCountry, setSearchCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(defaultCountryCode);
 
-    const hasLabel = !!label;
+  const hasLabel = !!label;
 
-    const cleanValue = value.replace(/[\s-]+/g, '');
+  const cleanValue = value.replace(/[\s-]+/g, '');
 
-    const handleClear = useCallback(() => {
-      onChange('');
-    }, [onChange]);
+  const handleClear = useCallback(() => {
+    onChange('');
+  }, [onChange]);
 
-    return (
-      <Box
-        sx={{
+  useEffect(() => {
+    if (!selectedCountry) {
+      setSelectedCountry(defaultCountryCode);
+    }
+  }, [defaultCountryCode, selectedCountry]);
+
+  const handleClickCountry = (inputValue) => {
+    startTransition(() => {
+      setSelectedCountry(inputValue);
+    });
+  };
+
+  const handleSearchCountry = (inputValue) => {
+    setSearchCountry(inputValue);
+  };
+
+  return (
+    <Box
+      sx={[
+        () => ({
           '--popover-button-mr': '12px',
           '--popover-button-height': '22px',
           '--popover-button-width': variant === 'standard' ? '48px' : '60px',
           position: 'relative',
-          [`& .${inputBaseClasses.input}`]: {
-            pl: 'calc(var(--popover-button-width) + var(--popover-button-mr))',
-          },
-          ...sx,
-        }}
-      >
-        {!disableSelect && (
-          <CountryListPopover
-            searchCountry={searchCountry}
-            countryCode={selectedCountry}
-            onClickCountry={(inputValue) => setSelectedCountry(inputValue)}
-            onSearchCountry={(inputValue) => setSearchCountry(inputValue)}
-            sx={{
-              pl: variant === 'standard' ? 0 : 1.5,
-              ...(variant === 'standard' &&
-                hasLabel && {
-                  mt: size === 'small' ? '16px' : '20px',
-                }),
-              ...((variant === 'filled' || variant === 'outlined') && {
-                mt: size === 'small' ? '8px' : '16px',
-              }),
-              ...(variant === 'filled' &&
-                hasLabel && {
-                  mt: size === 'small' ? '21px' : '25px',
-                }),
-            }}
-          />
-        )}
+          ...(!disableSelect && {
+            [`& .${inputBaseClasses.input}`]: {
+              pl: 'calc(var(--popover-button-width) + var(--popover-button-mr))',
+            },
+          }),
+        }),
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+    >
+      {!disableSelect && (
+        <CountryListPopover
+          countries={countries}
+          searchCountry={searchCountry}
+          countryCode={selectedCountry}
+          onClickCountry={handleClickCountry}
+          onSearchCountry={handleSearchCountry}
+          sx={{
+            pl: variant === 'standard' ? 0 : 1.5,
+            ...(variant === 'standard' && hasLabel && { mt: size === 'small' ? '16px' : '20px' }),
+            ...((variant === 'filled' || variant === 'outlined') && {
+              mt: size === 'small' ? '8px' : '16px',
+            }),
+            ...(variant === 'filled' && hasLabel && { mt: size === 'small' ? '21px' : '25px' }),
+          }}
+        />
+      )}
 
-        <PhoneNumberInput
-          ref={ref}
-          size={size}
-          label={label}
-          value={cleanValue}
-          variant={variant}
-          onChange={onChange}
-          hiddenLabel={!label}
-          country={selectedCountry}
-          inputComponent={CustomInput}
-          InputLabelProps={{ shrink: true }}
-          placeholder={placeholder ?? 'Enter phone number'}
-          InputProps={{
+      <PhoneNumberInput
+        ref={ref}
+        size={size}
+        label={label}
+        value={cleanValue}
+        variant={variant}
+        onChange={onChange}
+        hiddenLabel={!label}
+        country={selectedCountry}
+        inputComponent={CustomInput}
+        placeholder={placeholder ?? 'Enter phone number'}
+        slotProps={{
+          inputLabel: { shrink: true },
+          input: {
             endAdornment: cleanValue && (
               <InputAdornment position="end">
                 <IconButton size="small" edge="end" onClick={handleClear}>
@@ -99,14 +114,25 @@ export const PhoneInput = forwardRef(
                 </IconButton>
               </InputAdornment>
             ),
-          }}
-          {...other}
-        />
-      </Box>
-    );
-  }
-);
+          },
+        }}
+        {...other}
+      />
+    </Box>
+  );
+});
 
 // ----------------------------------------------------------------------
 
-const CustomInput = forwardRef(({ ...props }, ref) => <TextField inputRef={ref} {...props} />);
+const CustomInput = forwardRef((props, ref) => <TextField inputRef={ref} {...props} />);
+
+// ----------------------------------------------------------------------
+
+function getCountryCode(inputValue, countryCode) {
+  if (inputValue) {
+    const phoneNumber = parsePhoneNumber(inputValue);
+    return phoneNumber?.country;
+  }
+
+  return countryCode;
+}

@@ -1,8 +1,12 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import { buttonGroupClasses } from '@mui/material/ButtonGroup';
 
-import { varAlpha, stylesMode } from '../../styles';
+// ----------------------------------------------------------------------
 
 const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'];
+
+// ----------------------------------------------------------------------
 
 function styleColors(ownerState, styles) {
   const outputStyle = COLORS.reduce((acc, color) => {
@@ -24,14 +28,16 @@ const softVariant = {
     style: ({ theme }) => ({
       [buttonClasses]: {
         borderColor: varAlpha(theme.vars.palette[color].darkChannel, 0.24),
-        [stylesMode.dark]: { borderColor: varAlpha(theme.vars.palette[color].lightChannel, 0.24) },
+        ...theme.applyStyles('dark', {
+          borderColor: varAlpha(theme.vars.palette[color].lightChannel, 0.24),
+        }),
       },
       [`&.${buttonGroupClasses.vertical}`]: {
         [buttonClasses]: {
           borderColor: varAlpha(theme.vars.palette[color].darkChannel, 0.24),
-          [stylesMode.dark]: {
+          ...theme.applyStyles('dark', {
             borderColor: varAlpha(theme.vars.palette[color].lightChannel, 0.24),
-          },
+          }),
         },
       },
     }),
@@ -69,19 +75,16 @@ const MuiButtonGroup = {
   defaultProps: { disableElevation: true },
 
   /** **************************************
-   * VARIANTS
-   *************************************** */
-  variants: [
-    /**
-     * @variant soft
-     */
-    ...[...softVariant.base, ...softVariant.colors],
-  ],
-
-  /** **************************************
    * STYLE
    *************************************** */
   styleOverrides: {
+    root: {
+      variants: [
+        // @variant soft
+        softVariant.base,
+        softVariant.colors,
+      ].flat(),
+    },
     /**
      * @variant contained
      */

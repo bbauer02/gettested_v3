@@ -1,10 +1,9 @@
 'use client';
 
+import { useSetState } from 'minimal-shared/hooks';
 import { useMemo, useEffect, useCallback } from 'react';
 
-import { useSetState } from 'src/hooks/use-set-state';
-
-import axios, { endpoints } from 'src/utils/axios';
+import axios, { endpoints } from 'src/lib/axios';
 
 import { STORAGE_KEY } from './constant';
 import { AuthContext } from '../auth-context';
@@ -54,8 +53,8 @@ export function AuthProvider({ children }) {
       user: state.user
         ? {
             ...state.user,
-            role: state.user?.instituts[0].Role ?? {role_id:1, label: "User", power:1 },
-            systemRole: state.user?.systemRole ?? {role_id:1, label: "User", power:1 }
+            role: state.user?.instituts[0].Role ?? { role_id: 1, label: 'User', power: 1 },
+            systemRole: state.user?.systemRole ?? { role_id: 1, label: 'User', power: 1 },
           }
         : null,
       checkUserSession,

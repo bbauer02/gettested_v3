@@ -1,13 +1,13 @@
 import { cookies } from 'next/headers';
 
-import { STORAGE_KEY, defaultSettings } from './config-settings';
+import { defaultSettings, SETTINGS_STORAGE_KEY } from './settings-config';
 
 // ----------------------------------------------------------------------
 
-export async function detectSettings() {
+export async function detectSettings(storageKey = SETTINGS_STORAGE_KEY) {
   const cookieStore = cookies();
 
-  const settingsStore = cookieStore.get(STORAGE_KEY);
+  const settingsStore = cookieStore.get(storageKey);
 
   return settingsStore ? JSON.parse(settingsStore?.value) : defaultSettings;
 }

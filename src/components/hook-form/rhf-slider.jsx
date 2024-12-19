@@ -1,11 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
+import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-import FormHelperText from '@mui/material/FormHelperText';
+
+import { HelperText } from './help-text';
 
 // ----------------------------------------------------------------------
 
-export function RHFSlider({ name, helperText, ...other }) {
+export function RHFSlider({ name, helperText, slotProps, ...other }) {
   const { control } = useFormContext();
 
   return (
@@ -13,13 +15,16 @@ export function RHFSlider({ name, helperText, ...other }) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <>
+        <Box {...slotProps?.wrapper}>
           <Slider {...field} valueLabelDisplay="auto" {...other} />
 
-          {(!!error || helperText) && (
-            <FormHelperText error={!!error}>{error ? error?.message : helperText}</FormHelperText>
-          )}
-        </>
+          <HelperText
+            {...slotProps?.helperText}
+            disableGutters
+            errorMessage={error?.message}
+            helperText={helperText}
+          />
+        </Box>
       )}
     />
   );

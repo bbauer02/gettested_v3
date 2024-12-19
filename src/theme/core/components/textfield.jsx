@@ -1,8 +1,8 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import { inputBaseClasses } from '@mui/material/InputBase';
 import { filledInputClasses } from '@mui/material/FilledInput';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-
-import { varAlpha } from '../../styles';
 
 // ----------------------------------------------------------------------
 
@@ -12,12 +12,8 @@ const MuiInputBase = {
    *************************************** */
   styleOverrides: {
     root: ({ theme }) => ({
-      [`&.${inputBaseClasses.disabled}`]: {
-        '& svg': { color: theme.vars.palette.text.disabled },
-      },
-      [`& .${inputBaseClasses.input}:focus`]: {
-        borderRadius: 'inherit',
-      },
+      [`&.${inputBaseClasses.disabled}`]: { '& svg': { color: theme.vars.palette.text.disabled } },
+      [`& .${inputBaseClasses.input}:focus`]: { borderRadius: 'inherit' },
     }),
     input: ({ theme }) => ({
       fontSize: theme.typography.pxToRem(15),
@@ -25,10 +21,7 @@ const MuiInputBase = {
         // This will prevent zoom in Safari min font size ~ 16px
         fontSize: theme.typography.pxToRem(16),
       },
-      '&::placeholder': {
-        opacity: 1,
-        color: theme.vars.palette.text.disabled,
-      },
+      '&::placeholder': { opacity: 1, color: theme.vars.palette.text.disabled },
     }),
   },
 };
@@ -41,9 +34,7 @@ const MuiInput = {
    *************************************** */
   styleOverrides: {
     underline: ({ theme }) => ({
-      '&::before': {
-        borderBottomColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.32),
-      },
+      '&::before': { borderBottomColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.32) },
       '&::after': { borderBottomColor: theme.vars.palette.text.primary },
     }),
   },
@@ -97,9 +88,7 @@ const MuiFilledInput = {
     root: ({ theme }) => ({
       borderRadius: theme.shape.borderRadius,
       backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-      '&:hover': {
-        backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
-      },
+      '&:hover': { backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16) },
       [`&.${filledInputClasses.focused}`]: {
         backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
       },
@@ -116,6 +105,18 @@ const MuiFilledInput = {
   },
 };
 
+const MuiTextField = {
+  /** **************************************
+   * DEFAULT PROPS
+   *************************************** */
+  defaultProps: { variant: 'outlined' },
+
+  /** **************************************
+   * STYLE
+   *************************************** */
+  styleOverrides: {},
+};
+
 // ----------------------------------------------------------------------
 
 export const textfield = {
@@ -123,4 +124,5 @@ export const textfield = {
   MuiInputBase,
   MuiFilledInput,
   MuiOutlinedInput,
+  MuiTextField,
 };

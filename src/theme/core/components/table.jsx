@@ -1,7 +1,7 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import { tableRowClasses } from '@mui/material/TableRow';
 import { tableCellClasses } from '@mui/material/TableCell';
-
-import { varAlpha } from '../../styles';
 
 // ----------------------------------------------------------------------
 
@@ -13,10 +13,7 @@ const MuiTableContainer = {
     root: ({ theme }) => ({
       position: 'relative',
       scrollbarWidth: 'thin',
-      scrollbarColor: `${varAlpha(
-        theme.vars.palette.text.disabledChannel,
-        0.4
-      )} ${varAlpha(theme.vars.palette.text.disabledChannel, 0.08)}`,
+      scrollbarColor: `${varAlpha(theme.vars.palette.text.disabledChannel, 0.4)} ${varAlpha(theme.vars.palette.text.disabledChannel, 0.08)}`,
     }),
   },
 };
@@ -28,9 +25,7 @@ const MuiTable = {
    * STYLE
    *************************************** */
   styleOverrides: {
-    root: ({ theme }) => ({
-      '--palette-TableCell-border': theme.vars.palette.divider,
-    }),
+    root: ({ theme }) => ({ '--palette-TableCell-border': theme.vars.palette.divider }),
   },
 };
 
@@ -44,13 +39,9 @@ const MuiTableRow = {
     root: ({ theme }) => ({
       [`&.${tableRowClasses.selected}`]: {
         backgroundColor: varAlpha(theme.vars.palette.primary.darkChannel, 0.04),
-        '&:hover': {
-          backgroundColor: varAlpha(theme.vars.palette.primary.darkChannel, 0.08),
-        },
+        '&:hover': { backgroundColor: varAlpha(theme.vars.palette.primary.darkChannel, 0.08) },
       },
-      '&:last-of-type': {
-        [`& .${tableCellClasses.root}`]: { borderColor: 'transparent' },
-      },
+      '&:last-of-type': { [`& .${tableCellClasses.root}`]: { borderColor: 'transparent' } },
     }),
   },
 };

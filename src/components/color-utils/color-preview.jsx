@@ -1,47 +1,72 @@
 import { forwardRef } from 'react';
+import { varAlpha, mergeClasses } from 'minimal-shared/utils';
 
-import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
-import { varAlpha } from 'src/theme/styles';
+import { colorPreviewClasses } from './classes';
 
 // ----------------------------------------------------------------------
 
-export const ColorPreview = forwardRef(({ colors, limit = 3, sx, ...other }, ref) => {
-  const colorsRange = colors.slice(0, limit);
+export const ColorPreview = forwardRef((props, ref) => {
+  const { sx, colors, limit = 3, size = 16, gap = 6, className, slotProps, ...other } = props;
 
-  const restColors = colors.length - limit;
+  const colorsRange = colors.slice(0, limit);
+  const remainingColorCount = colors.length - limit;
 
   return (
-    <Box
+    <ColorPreviewRoot
       ref={ref}
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        ...sx,
-      }}
+      className={mergeClasses([colorPreviewClasses.root, className])}
+      sx={sx}
       {...other}
     >
       {colorsRange.map((color, index) => (
-        <Box
+        <ItemRoot
           key={color + index}
-          sx={{
-            ml: -0.75,
-            width: 16,
-            height: 16,
-            bgcolor: color,
-            borderRadius: '50%',
-            border: (theme) => `solid 2px ${theme.vars.palette.background.paper}`,
-            boxShadow: (theme) =>
-              `inset -1px 1px 2px ${varAlpha(theme.vars.palette.common.blackChannel, 0.24)}`,
-          }}
+          className={colorPreviewClasses.item}
+          {...slotProps?.item}
+          sx={[
+            {
+              '--item-color': color,
+              '--item-size': `${size}px`,
+              '--item-gap': `${-gap}px`,
+            },
+            ...(Array.isArray(slotProps?.item?.sx)
+              ? (slotProps.item?.sx ?? [])
+              : [slotProps?.item?.sx]),
+          ]}
         />
       ))}
 
       {colors.length > limit && (
-        <Box component="span" sx={{ typography: 'subtitle2' }}>{`+${restColors}`}</Box>
+        <ItemLabel
+          className={colorPreviewClasses.label}
+          {...slotProps?.label}
+        >{`+${remainingColorCount}`}</ItemLabel>
       )}
-    </Box>
+    </ColorPreviewRoot>
   );
 });
+
+// ----------------------------------------------------------------------
+
+const ColorPreviewRoot = styled('ul')(() => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+}));
+
+const ItemRoot = styled('li')(({ theme }) => ({
+  borderRadius: '50%',
+  width: 'var(--item-size)',
+  height: 'var(--item-size)',
+  marginLeft: 'var(--item-gap)',
+  backgroundColor: 'var(--item-color)',
+  border: `solid 2px ${theme.vars.palette.background.paper}`,
+  boxShadow: `inset -1px 1px 2px ${varAlpha(theme.vars.palette.common.blackChannel, 0.24)}`,
+}));
+
+const ItemLabel = styled('li')(({ theme }) => ({
+  ...theme.typography.subtitle2,
+}));

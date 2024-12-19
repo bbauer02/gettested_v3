@@ -1,33 +1,34 @@
-import COLORS from './colors.json';
-import { varAlpha, createPaletteChannel } from '../styles';
+import { varAlpha, createPaletteChannel } from 'minimal-shared/utils';
+
+import { themeConfig } from '../theme-config';
 
 // ----------------------------------------------------------------------
 
-// Grey
-export const grey = createPaletteChannel(COLORS.grey);
+// Primary color
+export const primary = createPaletteChannel(themeConfig.palette.primary);
 
-// Primary
-export const primary = createPaletteChannel(COLORS.primary);
+// Secondary color
+export const secondary = createPaletteChannel(themeConfig.palette.secondary);
 
-// Secondary
-export const secondary = createPaletteChannel(COLORS.secondary);
+// Info color
+export const info = createPaletteChannel(themeConfig.palette.info);
 
-// Info
-export const info = createPaletteChannel(COLORS.info);
+// Success color
+export const success = createPaletteChannel(themeConfig.palette.success);
 
-// Success
-export const success = createPaletteChannel(COLORS.success);
+// Warning color
+export const warning = createPaletteChannel(themeConfig.palette.warning);
 
-// Warning
-export const warning = createPaletteChannel(COLORS.warning);
+// Error color
+export const error = createPaletteChannel(themeConfig.palette.error);
 
-// Error
-export const error = createPaletteChannel(COLORS.error);
+// Common color
+export const common = createPaletteChannel(themeConfig.palette.common);
 
-// Common
-export const common = createPaletteChannel(COLORS.common);
+// Grey color
+export const grey = createPaletteChannel(themeConfig.palette.grey);
 
-// Text
+// Text color
 export const text = {
   light: createPaletteChannel({
     primary: grey[800],
@@ -41,7 +42,7 @@ export const text = {
   }),
 };
 
-// Background
+// Background color
 export const background = {
   light: createPaletteChannel({
     paper: '#FFFFFF',
@@ -55,7 +56,7 @@ export const background = {
   }),
 };
 
-// Action
+// Base action color
 export const baseAction = {
   hover: varAlpha(grey['500Channel'], 0.08),
   selected: varAlpha(grey['500Channel'], 0.16),
@@ -66,14 +67,15 @@ export const baseAction = {
   disabledOpacity: 0.48,
 };
 
+// Action color
 export const action = {
   light: { ...baseAction, active: grey[600] },
   dark: { ...baseAction, active: grey[500] },
 };
 
-/*
- * Base palette
- */
+// ----------------------------------------------------------------------
+
+// Base palette
 export const basePalette = {
   primary,
   secondary,
@@ -81,29 +83,22 @@ export const basePalette = {
   success,
   warning,
   error,
-  grey,
   common,
+  grey,
   divider: varAlpha(grey['500Channel'], 0.2),
-  action,
 };
 
-export const lightPalette = {
-  ...basePalette,
-  text: text.light,
-  background: background.light,
-  action: action.light,
-};
-
-export const darkPalette = {
-  ...basePalette,
-  text: text.dark,
-  background: background.dark,
-  action: action.dark,
-};
-
-// ----------------------------------------------------------------------
-
-export const colorSchemes = {
-  light: { palette: lightPalette },
-  dark: { palette: darkPalette },
+export const palette = {
+  light: {
+    ...basePalette,
+    text: text.light,
+    background: background.light,
+    action: action.light,
+  },
+  dark: {
+    ...basePalette,
+    text: text.dark,
+    background: background.dark,
+    action: action.dark,
+  },
 };

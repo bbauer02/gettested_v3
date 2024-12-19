@@ -1,6 +1,8 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import { paginationItemClasses } from '@mui/material/PaginationItem';
 
-import { varAlpha, stylesMode } from '../../styles';
+// ----------------------------------------------------------------------
 
 const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'];
 
@@ -17,7 +19,9 @@ const softVariant = {
           color: theme.vars.palette[color].dark,
           backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.08),
           '&:hover': { backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.16) },
-          [stylesMode.dark]: { color: theme.vars.palette[color].light },
+          ...theme.applyStyles('dark', {
+            color: theme.vars.palette[color].light,
+          }),
         },
       },
     }),
@@ -42,19 +46,17 @@ const softVariant = {
 
 const MuiPagination = {
   /** **************************************
-   * VARIANTS
-   *************************************** */
-  variants: [
-    /**
-     * @variant soft
-     */
-    ...[...softVariant.standardColor, ...softVariant.colors],
-  ],
-
-  /** **************************************
    * STYLE
    *************************************** */
   styleOverrides: {
+    root: {
+      variants: [
+        // @variant soft
+        softVariant.standardColor,
+        softVariant.colors,
+      ].flat(),
+    },
+
     /**
      * @variant text
      */
@@ -66,10 +68,10 @@ const MuiPagination = {
             color: theme.vars.palette.common.white,
             backgroundColor: theme.vars.palette.text.primary,
             '&:hover': { backgroundColor: theme.vars.palette.grey[700] },
-            [stylesMode.dark]: {
+            ...theme.applyStyles('dark', {
               color: theme.vars.palette.grey[800],
               '&:hover': { backgroundColor: theme.vars.palette.grey[100] },
-            },
+            }),
           }),
         },
       },

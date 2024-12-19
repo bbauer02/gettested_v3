@@ -26,7 +26,6 @@ turndownService.addRule('keep', {
 export function htmlToMarkdown(html) {
   return turndownService.turndown(html);
 }
-
 // ----------------------------------------------------------------------
 
 export function isMarkdownContent(content) {

@@ -1,5 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 
+import { carouselClasses } from '../classes';
+
 // ----------------------------------------------------------------------
 
 export function useParallax(mainApi, parallax) {
@@ -12,7 +14,7 @@ export function useParallax(mainApi, parallax) {
   const setTweenNodes = useCallback((_mainApi) => {
     tweenNodes.current = _mainApi
       .slideNodes()
-      .map((slideNode) => slideNode.querySelector('.slide__parallax__layer'));
+      .map((slideNode) => slideNode.querySelector(`.${carouselClasses.slide.parallax}`));
   }, []);
 
   const setTweenFactor = useCallback(

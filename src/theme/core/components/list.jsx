@@ -34,8 +34,4 @@ const MuiListItemText = {
 
 // ----------------------------------------------------------------------
 
-export const list = {
-  MuiListItemIcon,
-  MuiListItemAvatar,
-  MuiListItemText,
-};
+export const list = { MuiListItemIcon, MuiListItemAvatar, MuiListItemText };

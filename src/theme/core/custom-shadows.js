@@ -1,4 +1,5 @@
-import { varAlpha } from '../styles';
+import { varAlpha } from 'minimal-shared/utils';
+
 import { grey, info, error, common, primary, success, warning, secondary } from './palette';
 
 // ----------------------------------------------------------------------
@@ -7,9 +8,7 @@ export function createShadowColor(colorChannel) {
   return `0 8px 16px 0 ${varAlpha(colorChannel, 0.24)}`;
 }
 
-export function customShadows(colorScheme) {
-  const colorChannel = colorScheme === 'light' ? grey['500Channel'] : common.blackChannel;
-
+function createCustomShadows(colorChannel) {
   return {
     z1: `0 1px 2px 0 ${varAlpha(colorChannel, 0.16)}`,
     z4: `0 4px 8px 0 ${varAlpha(colorChannel, 0.16)}`,
@@ -18,17 +17,11 @@ export function customShadows(colorScheme) {
     z16: `0 16px 32px -4px ${varAlpha(colorChannel, 0.16)}`,
     z20: `0 20px 40px -4px ${varAlpha(colorChannel, 0.16)}`,
     z24: `0 24px 48px 0 ${varAlpha(colorChannel, 0.16)}`,
-    //
+    /********/
     dialog: `-40px 40px 80px -8px ${varAlpha(common.blackChannel, 0.24)}`,
-    card: `0 0 2px 0 ${varAlpha(
-      colorChannel,
-      0.2
-    )}, 0 12px 24px -4px ${varAlpha(colorChannel, 0.12)}`,
-    dropdown: `0 0 2px 0 ${varAlpha(
-      colorChannel,
-      0.24
-    )}, -20px 20px 40px -4px ${varAlpha(colorChannel, 0.24)}`,
-    //
+    card: `0 0 2px 0 ${varAlpha(colorChannel, 0.2)}, 0 12px 24px -4px ${varAlpha(colorChannel, 0.12)}`,
+    dropdown: `0 0 2px 0 ${varAlpha(colorChannel, 0.24)}, -20px 20px 40px -4px ${varAlpha(colorChannel, 0.24)}`,
+    /********/
     primary: createShadowColor(primary.mainChannel),
     secondary: createShadowColor(secondary.mainChannel),
     info: createShadowColor(info.mainChannel),
@@ -37,3 +30,10 @@ export function customShadows(colorScheme) {
     error: createShadowColor(error.mainChannel),
   };
 }
+
+// ----------------------------------------------------------------------
+
+export const customShadows = {
+  light: createCustomShadows(grey['500Channel']),
+  dark: createCustomShadows(common.blackChannel),
+};

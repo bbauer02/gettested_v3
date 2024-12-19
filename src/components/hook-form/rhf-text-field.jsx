@@ -1,11 +1,14 @@
 import { Controller, useFormContext } from 'react-hook-form';
+import { transformValue, transformValueOnBlur, transformValueOnChange } from 'minimal-shared/utils';
 
 import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
-export function RHFTextField({ name, helperText, type, ...other }) {
+export function RHFTextField({ name, helperText, slotProps, type = 'text', ...other }) {
   const { control } = useFormContext();
+
+  const isNumberType = type === 'number';
 
   return (
     <Controller
@@ -15,19 +18,31 @@ export function RHFTextField({ name, helperText, type, ...other }) {
         <TextField
           {...field}
           fullWidth
-          type={type}
-          value={type === 'number' && field.value === 0 ? '' : field.value}
+          value={isNumberType ? transformValue(field.value) : field.value}
           onChange={(event) => {
-            if (type === 'number') {
-              field.onChange(Number(event.target.value));
-            } else {
-              field.onChange(event.target.value);
-            }
+            const transformedValue = isNumberType
+              ? transformValueOnChange(event.target.value)
+              : event.target.value;
+
+            field.onChange(transformedValue);
           }}
+          onBlur={(event) => {
+            const transformedValue = isNumberType
+              ? transformValueOnBlur(event.target.value)
+              : event.target.value;
+
+            field.onChange(transformedValue);
+          }}
+          type={isNumberType ? 'text' : type}
           error={!!error}
           helperText={error?.message ?? helperText}
-          inputProps={{
-            autoComplete: 'off',
+          slotProps={{
+            ...slotProps,
+            htmlInput: {
+              autoComplete: 'off',
+              ...slotProps?.htmlInput,
+              ...(isNumberType && { inputMode: 'decimal', pattern: '[0-9]*\\.?[0-9]*' }),
+            },
           }}
           {...other}
         />

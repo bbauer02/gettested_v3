@@ -1,13 +1,17 @@
 import { Popup } from 'react-map-gl';
 
-import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
 export function MapPopup({ sx, children, ...other }) {
   return (
-    <Box component={Popup} anchor="bottom" sx={sx} {...other}>
+    <MapPopupRoot anchor="bottom" sx={sx} {...other}>
       {children}
-    </Box>
+    </MapPopupRoot>
   );
 }
+
+// ----------------------------------------------------------------------
+
+const MapPopupRoot = styled(Popup)``;

@@ -1,7 +1,7 @@
+import { varAlpha } from 'minimal-shared/utils';
+
 import SvgIcon from '@mui/material/SvgIcon';
 import { chipClasses } from '@mui/material/Chip';
-
-import { varAlpha, stylesMode } from '../../styles';
 
 // ----------------------------------------------------------------------
 
@@ -9,7 +9,7 @@ import { varAlpha, stylesMode } from '../../styles';
  * Icons
  * https://icon-sets.iconify.design/solar/close-circle-bold
  */
-export const ChipDeleteIcon = (props) => (
+const ChipDeleteIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -19,6 +19,8 @@ export const ChipDeleteIcon = (props) => (
     />
   </SvgIcon>
 );
+
+// ----------------------------------------------------------------------
 
 const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'];
 
@@ -43,7 +45,9 @@ const softVariant = {
       color: theme.vars.palette[color].dark,
       backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.16),
       '&:hover': { backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.32) },
-      [stylesMode.dark]: { color: theme.vars.palette[color].light },
+      ...theme.applyStyles('dark', {
+        color: theme.vars.palette[color].light,
+      }),
     }),
   })),
   inheritColor: [
@@ -64,16 +68,6 @@ const MuiChip = {
    * DEFAULT PROPS
    *************************************** */
   defaultProps: { deleteIcon: <ChipDeleteIcon /> },
-
-  /** **************************************
-   * VARIANTS
-   *************************************** */
-  variants: [
-    /**
-     * @variant soft
-     */
-    ...[...softVariant.inheritColor, ...softVariant.colors],
-  ],
 
   /** **************************************
    * STYLE
@@ -106,7 +100,15 @@ const MuiChip = {
         },
       };
 
-      return { ...styled.colors, ...styled.disabled };
+      return {
+        variants: [
+          // @variant soft
+          softVariant.inheritColor,
+          softVariant.colors,
+        ].flat(),
+        ...styled.colors,
+        ...styled.disabled,
+      };
     },
     label: ({ theme }) => ({ fontWeight: theme.typography.fontWeightMedium }),
     icon: { color: 'currentColor' },
@@ -129,10 +131,10 @@ const MuiChip = {
               backgroundColor: theme.vars.palette.text.primary,
               [`& .${chipClasses.avatar}`]: { color: theme.vars.palette.text.primary },
               '&:hover': { backgroundColor: theme.vars.palette.grey[700] },
-              [stylesMode.dark]: {
+              ...theme.applyStyles('dark', {
                 color: theme.vars.palette.grey[800],
                 '&:hover': { backgroundColor: theme.vars.palette.grey[100] },
-              },
+              }),
             }),
         },
       };

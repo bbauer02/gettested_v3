@@ -13,7 +13,7 @@ export function RHFCountrySelect({ name, helperText, ...other }) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <CountrySelect
-          id={`rhf-country-select-${name}`}
+          id={`${name}-rhf-country-select`}
           value={field.value}
           onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
           error={!!error}
