@@ -4,11 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller,  useFieldArray, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -21,22 +21,35 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useGetTests} from "src/actions/test";
+
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { useGetTests} from "src/actions/test";
-import {QuestionNewEditMcq} from "./question-new-edit-mcq";
-
+import {
+  QuestionNewEditMcqUcq,
+  QuestionNewEditTrueOrFalse,
+  QuestionNewEditFillTheBlank,
+  QuestionNewEditHighlight,
+} from './type';
 
 export const NewQuestionSchema = zod.object({
   label: zod.string().min(1, { message: 'Label is required!' }),
   instruction: zod.string().min(1, { message: 'instruction is required!' }),
   timemax: zod.number().min(1, { message: 'Duration is required!' }),
   point: zod.number().min(1, { message: 'Point is required!' }),
-  test:schemaHelper.objectOrNull({message: { required_error: 'test is required!' },}),
+  test: zod.object({
+    // Define your test object properties here
+  }).nullable({
+    message: 'test is required!'
+  }),
   level: zod.object({level_id: zod.number(), label: zod.string(),}).nullable(),
-  type:schemaHelper.objectOrNull({message: { required_error: 'type is required!' },}),
+  type: zod.object({
+    // Define your type object properties here
+  }).nullable({
+    message: 'type is required!'
+  }),
 }).superRefine((data, ctx) => {
     // Validation plus détaillée
     if (data.test && data.test.Levels.length  && !data.level) {
@@ -82,6 +95,9 @@ export function QuestionNewEditForm({ currentQuestion }) {
           isCorrect: false
         },
       ],
+      blankSymbol: currentQuestion?.blankSymbol || '___',
+      sentence: currentQuestion?.sentence || '',
+      blankAnswers: currentQuestion?.blankAnswers || []
     }),
     [currentQuestion]
   );
@@ -350,7 +366,10 @@ export function QuestionNewEditForm({ currentQuestion }) {
         {renderDetails}
         {renderProperties}
         {renderQuestionTypes}
-        {questionType && questionType.value === "MCQ" ? <QuestionNewEditMcq /> : ""}
+        {questionType && (questionType.value === "MCQ" ||  questionType.value === "UCQ" ) ? <QuestionNewEditMcqUcq  type={questionType.value}   title={`${questionType.value} Question`}/> : ""}
+        {questionType && questionType.value === "TrueFalse" && <QuestionNewEditTrueOrFalse />}
+        {questionType && questionType.value === "FillInTheBlanks" && <QuestionNewEditFillTheBlank />}
+        {questionType && questionType.value === "Highlight" && <QuestionNewEditHighlight />}
         {renderActions}
       </Stack>
     </Form>
