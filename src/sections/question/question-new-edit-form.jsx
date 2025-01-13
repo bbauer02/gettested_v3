@@ -105,7 +105,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
 
   const methods = useForm({
     mode: 'all',
-   // resolver: zodResolver(NewQuestionSchema),
+    // resolver: zodResolver(NewQuestionSchema),
     defaultValues,
   });
 
@@ -126,6 +126,23 @@ export function QuestionNewEditForm({ currentQuestion }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      const formattedData = {
+        label: data.label,
+        instruction: data.instruction,
+        timemax: Number(data.timemax),
+        point: Number(data.point),
+        test: {
+          test_id: data.test.test_id,
+          label: data.test.label
+        },
+        level: {
+          level_id: data.level.level_id,
+          label: data.level.label
+        },
+        type: data.type.value,
+        question: null // Sera remplacé selon le type
+      };
+      
       toast.success(currentQuestion ? 'Update success!' : 'Create success!');
       // reset();
       // router.push(paths.dashboard.question.root);
@@ -155,6 +172,28 @@ export function QuestionNewEditForm({ currentQuestion }) {
     }
   };
 
+  // Fonction de validation supplémentaire
+  const validateQuestionData = (data) => {
+    switch (data.type) {
+      case 'UCQ':
+        // Vérifier qu'il y a exactement une réponse correcte
+        const correctAnswers = data.question.choices.filter(choice => choice.isCorrect);
+        if (correctAnswers.length !== 1) {
+          throw new Error('UCQ must have exactly one correct answer');
+        }
+        break;
+
+      case 'FillInTheBlanks':
+        // Vérifier que le nombre de réponses correspond au nombre de blancs
+        const blankCount = (data.question.text.match(new RegExp(data.question.blankSymbol, 'g')) || []).length;
+        if (blankCount !== data.question.answers.length) {
+          throw new Error('Number of answers must match number of blanks');
+        }
+        break;
+
+      // Ajouter d'autres validations si nécessaire
+    }
+  };
 
   const renderDetails = (
     <Card>
