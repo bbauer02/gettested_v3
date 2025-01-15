@@ -1,6 +1,9 @@
+import { Fragment } from 'react';
 import { mergeClasses } from 'minimal-shared/utils';
 import { m, useSpring, useTransform } from 'framer-motion';
 
+import Box from '@mui/material/Box';
+import Portal from '@mui/material/Portal';
 import { styled, useTheme } from '@mui/material/styles';
 
 import { createClasses } from 'src/theme/create-classes';
@@ -15,7 +18,9 @@ export const scrollProgressClasses = {
 export function ScrollProgress({
   sx,
   size,
+  portal,
   variant,
+  slotProps,
   className,
   thickness = 3.6,
   whenScroll = 'y',
@@ -31,11 +36,7 @@ export function ScrollProgress({
 
   const progress = isRtl && whenScroll === 'x' ? transformProgress : progressProps;
 
-  const scaleX = useSpring(progress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const scaleX = useSpring(progress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   const progressSize = variant === 'circular' ? (size ?? 64) : (size ?? 3);
 
@@ -45,11 +46,11 @@ export function ScrollProgress({
       xmlns="http://www.w3.org/2000/svg"
       className={mergeClasses([scrollProgressClasses.circular, className])}
       sx={[
-        () => ({
+        {
           width: progressSize,
           height: progressSize,
           ...(color !== 'inherit' && { color: theme.vars.palette[color].main }),
-        }),
+        },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       {...other}
@@ -76,12 +77,12 @@ export function ScrollProgress({
     <LinearRoot
       className={mergeClasses([scrollProgressClasses.linear, className])}
       sx={[
-        () => ({
+        {
           height: progressSize,
           ...(color !== 'inherit' && {
             background: `linear-gradient(135deg, ${theme.vars.palette[color].light}, ${theme.vars.palette[color].main})`,
           }),
-        }),
+        },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       style={{ scaleX }}
@@ -89,10 +90,14 @@ export function ScrollProgress({
     />
   );
 
+  const PortalWrapper = portal ? Portal : Fragment;
+
   return (
-    <div style={{ overflow: 'hidden' }}>
-      {variant === 'circular' ? renderCircular() : renderLinear()}
-    </div>
+    <PortalWrapper>
+      <Box {...slotProps?.wrapper}>
+        {variant === 'circular' ? renderCircular() : renderLinear()}
+      </Box>
+    </PortalWrapper>
   );
 }
 

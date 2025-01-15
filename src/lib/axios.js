@@ -39,4 +39,7 @@ export const endpoints = {
   test: {
     list: '/api/tests',
   },
+  skill: {
+    list: '/api/skills',
+  },
 };

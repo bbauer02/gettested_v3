@@ -107,19 +107,16 @@ export function CountryListPopover({
         >
           <FlagIcon
             code={country.code}
-            sx={{
-              mr: 1,
-              width: 22,
-              height: 22,
-              borderRadius: '50%',
-            }}
+            sx={{ mr: 1, width: 22, height: 22, borderRadius: '50%' }}
           />
 
           <ListItemText
             primary={country.label}
             secondary={`${country.code} (+${country.phone})`}
-            primaryTypographyProps={{ noWrap: true, typography: 'body2' }}
-            secondaryTypographyProps={{ typography: 'caption' }}
+            slotProps={{
+              primary: { noWrap: true, sx: { typography: 'body2' } },
+              secondary: { sx: { typography: 'caption' } },
+            }}
           />
         </MenuItem>
       ))}

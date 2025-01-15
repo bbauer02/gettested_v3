@@ -6,11 +6,11 @@ import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
-import { NavUl } from '../components';
 import { Iconify } from '../../iconify';
 import { NavSubList } from './nav-sub-list';
 import { megaMenuClasses } from '../styles';
 import { NavCarousel } from './nav-carousel';
+import { NavUl } from '../components/nav-elements';
 
 // ----------------------------------------------------------------------
 

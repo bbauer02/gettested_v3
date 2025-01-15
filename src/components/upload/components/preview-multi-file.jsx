@@ -64,9 +64,8 @@ export function MultiFilePreview({
             <ListItemText
               primary={name}
               secondary={fData(size)}
-              secondaryTypographyProps={{
-                component: 'span',
-                typography: 'caption',
+              slotProps={{
+                secondary: { sx: { typography: 'caption' } },
               }}
             />
 

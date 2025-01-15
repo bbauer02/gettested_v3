@@ -1,11 +1,10 @@
 import { z as zod } from 'zod';
-import {useMemo, useEffect, useState} from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {useMemo, useEffect, useState, useCallback} from 'react';
 import { useForm, Controller,  useFieldArray, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -22,6 +21,8 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useGetTests} from "src/actions/test";
+
+import { useGetskills} from '../../actions/skill';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -45,6 +46,7 @@ export const NewQuestionSchema = zod.object({
     message: 'test is required!'
   }),
   level: zod.object({level_id: zod.number(), label: zod.string(),}).nullable(),
+  skills: zod.string().array().min(1, { message: 'Must have at least 1 skill!' }),
   type: zod.object({
     // Define your type object properties here
   }).nullable({
@@ -76,6 +78,9 @@ export function QuestionNewEditForm({ currentQuestion }) {
 
   const { tests, testsLoading } = useGetTests(true);
 
+  const { skills, skillsLoading } = useGetskills(true);
+
+
   const [testLevels, setTestLevels] = useState(null);
 
   const [questionType, setQuestionType] = useState(null);
@@ -88,6 +93,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
       point: currentQuestion?.point || 0,
       test:currentQuestion?.test || null,
       level:currentQuestion?.level || null,
+      skills:currentQuestion?.skills || [],
       type:currentQuestion?.type || null,
       mcqItems: currentQuestion?.mcqItems || [
         {
@@ -139,24 +145,88 @@ export function QuestionNewEditForm({ currentQuestion }) {
           level_id: data.level.level_id,
           label: data.level.label
         },
+        skills: data.skills.map(skill => ({
+          skill_id: skill.skill_id,
+          label: skill.label
+        })),
         type: data.type.value,
-        question: null // Sera remplacé selon le type
+        question: null // Sera défini selon le type
       };
-      
+
+      // Formater la question selon le type
+      switch (data.type.value) {
+        case 'MCQ':
+          formattedData.question = {
+            text: data.mcqQuestion,
+            choices: data.mcqItems.map(item => ({
+              text: item.answer,
+              isCorrect: item.isCorrect
+            }))
+          };
+          break;
+
+        case 'UCQ':
+          formattedData.question = {
+            text: data.mcqQuestion,
+            choices: data.mcqItems.map(item => ({
+              text: item.answer,
+              isCorrect: item.isCorrect
+            })),
+            // Vérification qu'une seule réponse est correcte
+            correctAnswer: data.mcqItems.find(item => item.isCorrect)?.answer
+          };
+          break;
+
+        case 'TrueFalse':
+          formattedData.question = {
+            text: data.truefalseQuestion,
+            answer: data.correctAnswer
+          };
+          break;
+
+        case 'FillInTheBlanks':
+          formattedData.question = {
+            text: data.sentence,
+            blankSymbol: data.blankSymbol,
+            answers: data.blankAnswers.map(item => item.answer)
+          };
+          break;
+
+        case 'Highlight':
+          formattedData.question = {
+            text: data.sentence,
+            answers: data.highlightAnswers
+          };
+          break;
+
+        default:
+          throw new Error('Invalid question type');
+      }
+
+      // Validations spécifiques
+      validateQuestionData(formattedData);
+
+      console.info('DATA', formattedData);
       toast.success(currentQuestion ? 'Update success!' : 'Create success!');
-      // reset();
-      // router.push(paths.dashboard.question.root);
-      console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }
   });
+
+  // Gérer les skills en fonction du test sélectionné
+  const getTestSkills = useCallback((selectedTest) => {
+    if (!selectedTest) return [];
+    // Si c'est un test enfant (parent_id existe), on cherche les skills du parent
+    const testIdToUse = selectedTest.parent_id ? selectedTest.parent_id : selectedTest.test_id;
+    return skills?.filter(skill => skill.test_id === testIdToUse) || [];
+  }, [skills]);
 
   const handleTestChange = (selectedTest) => {
     if(selectedTest) {
       setTestLevels(selectedTest.Levels);
       // Réinitialiser le level quand on change de test
       methods.setValue('level', null);
+      methods.setValue('skills', []);
     } else {
       setTestLevels(null);
     }
@@ -206,8 +276,8 @@ export function QuestionNewEditForm({ currentQuestion }) {
           <Typography variant="subtitle2">Label</Typography>
           <Field.Text name="label" placeholder="Ex: Question 1 ..." />
         </Stack>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}  sx={{ width: '100%' }}>
-          <Stack spacing={1.5}  sx={{ width: { xs: '100%', sm: '50%' } }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ width: '100%' }}>
+          <Stack spacing={1.5} sx={{ width: { xs: '100%', sm: '50%' } }}>
             <Typography variant="subtitle2">Test</Typography>
             <Field.Autocomplete
               name="test"
@@ -224,7 +294,8 @@ export function QuestionNewEditForm({ currentQuestion }) {
               isOptionEqualToValue={(option, value) => {
                 // Gestion plus robuste de la comparaison
                 if (!option || !value) return false;
-                if (typeof option === 'string' || typeof value === 'string') return option === value;
+                if (typeof option === 'string' || typeof value === 'string')
+                  return option === value;
                 return option.test_id === value.test_id;
               }}
               renderOption={(props, option) => (
@@ -232,21 +303,20 @@ export function QuestionNewEditForm({ currentQuestion }) {
                   {option.label}
                 </li>
               )}
-
               onChange={(event, value) => {
                 handleTestChange(value);
                 methods.setValue('test', value, {
                   shouldValidate: true,
-                  shouldDirty: true
+                  shouldDirty: true,
                 });
               }}
               sx={{ width: '100%' }} // Assure que l'Autocomplete prend toute la largeur
             />
           </Stack>
-          <Stack spacing={1.5}  sx={{ width: { xs: '100%', sm: '50%' } }}>
+          <Stack spacing={1.5} sx={{ width: { xs: '100%', sm: '50%' } }}>
             <Typography variant="subtitle2">Level</Typography>
             <Field.Autocomplete
-              disabled={!testLevels}
+              disabled={!testLevels || !testLevels.length}
               name="level"
               placeholder="Choisissez un level"
               autoHighlight
@@ -261,7 +331,8 @@ export function QuestionNewEditForm({ currentQuestion }) {
               isOptionEqualToValue={(option, value) => {
                 // Gestion plus robuste de la comparaison
                 if (!option || !value) return false;
-                if (typeof option === 'string' || typeof value === 'string') return option === value;
+                if (typeof option === 'string' || typeof value === 'string')
+                  return option === value;
                 return option.level_id === value.level_id;
               }}
               renderOption={(props, option) => (
@@ -272,15 +343,127 @@ export function QuestionNewEditForm({ currentQuestion }) {
               sx={{ width: '100%' }} // Assure que l'Autocomplete prend toute la largeur
             />
           </Stack>
+
+        </Stack>
+        <Stack spacing={1.5} sx={{ width: '100%' }}>
+          <Typography variant="subtitle2">Compétences associées</Typography>
+          <Field.Autocomplete
+            name="skills"
+            label="Skills"
+            placeholder="+ Sélectionner des compétences"
+            multiple
+            freeSolo
+            disabled={!methods.watch('test')}
+            disableCloseOnSelect
+            options={getTestSkills(methods.watch('test'))}
+            getOptionLabel={(option) => {
+              if (typeof option === 'string') return option;
+              if (!option) return '';
+              return option.label;
+            }}
+            isOptionEqualToValue={(option, value) => {
+              if (!option || !value) return false;
+              return option.skill_id === value.skill_id;
+            }}
+            renderOption={(props, option) => {
+              const { key, ...otherProps } = props;
+              return (
+                <li
+                  {...otherProps}
+                  key={option.skill_id}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      width: '100%',
+                      pl: option.parent_id ? 2 : 0,
+                      py: 0.75,
+                      // Ligne verticale pour les sous-compétences
+                      borderLeft: (theme) => option.parent_id ?
+                        `1px solid ${theme.palette.divider}` : 'none',
+                      '&:hover': {
+                        bgcolor: 'action.hover',
+                        // Changement de couleur de la ligne au survol
+                        borderLeftColor: (theme) => option.parent_id ?
+                          theme.palette.primary.light : 'none'
+                      }
+                    }}
+                  >
+                    {option.parent_id && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          mr: 1,
+                          // Ligne horizontale pour connecter à la ligne verticale
+                          '&::before': {
+                            content: '""',
+                            width: '12px',
+                            height: '1px',
+                            bgcolor: 'divider',
+                            mr: 1
+                          }
+                        }}
+                      >
+                        <Iconify
+                          key={`icon-${option.skill_id}`}
+                          icon="eva:arrow-right-outline"
+                          width={16}
+                          sx={{ color: 'text.secondary' }}
+                        />
+                      </Box>
+                    )}
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: option.parent_id ? 400 : 600,
+                        color: option.parent_id ? 'text.secondary' : 'text.primary'
+                      }}
+                    >
+                      {option.label}
+                    </Typography>
+                  </Box>
+                </li>
+              );
+            }}
+            renderTags={(selected, getTagProps) =>
+              selected.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  key={option.skill_id || index}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      {option.parent_id && (
+                        <Typography
+                          variant="caption"
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          {getTestSkills(methods.watch('test'))
+                            .find(skill => skill.skill_id === option.parent_id)?.label} →
+                        </Typography>
+                      )}
+                      {option.label}
+                    </Box>
+                  }
+                  size="small"
+                  color="info"
+                  variant="soft"
+                />
+              ))
+            }
+          />
+          {methods.formState.errors.skills && (
+            <Typography variant="caption" sx={{ color: 'error.main' }}>
+              {methods.formState.errors.skills.message}
+            </Typography>
+          )}
         </Stack>
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Instruction</Typography>
           <Field.Editor name="instruction" sx={{ maxHeight: 480 }} />
         </Stack>
-
       </Stack>
-
-
     </Card>
   );
 

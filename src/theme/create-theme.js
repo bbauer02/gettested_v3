@@ -37,7 +37,7 @@ export const baseTheme = {
 
 // ----------------------------------------------------------------------
 
-export function createTheme({ settingsState, themeOverrides = {} } = {}) {
+export function createTheme({ settingsState, themeOverrides = {}, localeComponents = {} } = {}) {
   // Update core theme settings
   const updatedCore = settingsState ? updateCoreWithSettings(baseTheme, settingsState) : baseTheme;
 
@@ -47,7 +47,7 @@ export function createTheme({ settingsState, themeOverrides = {} } = {}) {
     : {};
 
   // Create and return the final theme
-  const theme = createMuiTheme(updatedCore, updatedComponents, themeOverrides);
+  const theme = createMuiTheme(updatedCore, updatedComponents, localeComponents, themeOverrides);
 
   return theme;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-import { useRouter, useSearchParams } from 'src/routes/hooks';
+import { useSearchParams } from 'src/routes/hooks';
 
 import { CONFIG } from 'src/global-config';
 
@@ -13,15 +13,12 @@ import { useAuthContext } from '../hooks';
 // ----------------------------------------------------------------------
 
 export function GuestGuard({ children }) {
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
-
   const { loading, authenticated } = useAuthContext();
 
-  const [isChecking, setIsChecking] = useState(true);
-
+  const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo') || CONFIG.auth.redirectPath;
+
+  const [isChecking, setIsChecking] = useState(true);
 
   const checkPermissions = async () => {
     if (loading) {
@@ -29,7 +26,10 @@ export function GuestGuard({ children }) {
     }
 
     if (authenticated) {
-      router.replace(returnTo);
+      // Redirect authenticated users to the returnTo path
+      // Using `window.location.href` instead of `router.replace` to avoid unnecessary re-rendering
+      // that might be caused by the AuthGuard component
+      window.location.href = returnTo;
       return;
     }
 
