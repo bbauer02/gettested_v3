@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import Box from "@mui/material/Box";
@@ -15,8 +15,8 @@ import { Iconify } from 'src/components/iconify';
 export function QuestionNewEditHighlight() {
   const { setValue, watch } = useFormContext();
   const [selectedText, setSelectedText] = useState('');
-  const [answers, setAnswers] = useState([]);
-  const sentence = watch('sentence') || '';
+  const [answers, setAnswers] = useState( watch('highlight')?.answers || []);
+  const sentence = watch('highlight')?.text || '';
 
   // Observer les changements de sélection de texte
   const handleTextSelect = () => {
@@ -77,7 +77,7 @@ export function QuestionNewEditHighlight() {
             sx={{ position: 'relative' }}
           >
             <Field.Editor
-              name="sentence"
+              name="highlight.text"
               sx={{ minHeight: 200 }}
             />
           </Box>

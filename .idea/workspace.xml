@@ -41,34 +41,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "v6.2.0",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "yarn",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\baptiste\\Documents\\Dev\\Getskills\\gettested_v3\\node_modules\\prettier",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PhpStorm 2024.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;&lt;unknown&gt;&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\baptiste\\Documents\\Dev\\Getskills\\gettested_v3\\node_modules\\prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PhpStorm 2022.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\admin\Documents\dev\gettested_v3\src\sections\question\type" />
+      <recent name="C:\Users\baptiste\Documents\Dev\Getskills\gettested_v3\src\sections\subject\form" />
+      <recent name="C:\Users\baptiste\Documents\Dev\Getskills\gettested_v3\src\sections\subject\table" />
+      <recent name="C:\Users\baptiste\Documents\Dev\Getskills\gettested_v3\src\sections\question\preview\types" />
+      <recent name="C:\Users\baptiste\Documents\Dev\Getskills\gettested_v3\public\assets\icons\questions" />
+      <recent name="C:\Users\baptiste\Documents\Dev\Getskills\gettested_v3\src\sections\question\ preview" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PS-243.21565.202" />
-        <option value="bundled-php-predefined-a98d8de5180a-5fbe0c30323e-com.jetbrains.php.sharedIndexes-PS-243.21565.202" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-PS-243.23654.115" />
+        <option value="bundled-php-predefined-a98d8de5180a-4c3855d0ab16-com.jetbrains.php.sharedIndexes-PS-243.23654.115" />
       </set>
     </attachedChunks>
   </component>
@@ -84,7 +88,19 @@
       <workItem from="1735895267972" duration="1183000" />
       <workItem from="1736774317726" duration="387000" />
       <workItem from="1736774720126" duration="92000" />
-      <workItem from="1736775313274" duration="17716000" />
+      <workItem from="1736775313274" duration="30655000" />
+      <workItem from="1737016232568" duration="202000" />
+      <workItem from="1737016625179" duration="1145000" />
+      <workItem from="1737019518764" duration="23531000" />
+      <workItem from="1737288926364" duration="11346000" />
+      <workItem from="1738317774151" duration="24943000" />
+      <workItem from="1738572161225" duration="29099000" />
+      <workItem from="1738746696817" duration="3126000" />
+      <workItem from="1738831593104" duration="88732000" />
+      <workItem from="1739190530376" duration="351000" />
+      <workItem from="1739191464647" duration="23897000" />
+      <workItem from="1739534756277" duration="605000" />
+      <workItem from="1740425258689" duration="6089000" />
     </task>
     <servers />
   </component>

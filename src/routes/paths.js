@@ -50,12 +50,34 @@ export const paths = {
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
+    exam: {
+      root:  `${ROOTS.DASHBOARD}/exam`,
+      new: `${ROOTS.DASHBOARD}/exam/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/exam/${id}/view`,
+      list: `${ROOTS.DASHBOARD}/exam/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/exam/${id}/edit`,
+    },
     question: {
       root:  `${ROOTS.DASHBOARD}/question`,
       new: `${ROOTS.DASHBOARD}/question/new`,
       details: (id) => `${ROOTS.DASHBOARD}/question/${id}`,
+      preview: (id) => `${ROOTS.DASHBOARD}/question/${id}/preview`,
       list: `${ROOTS.DASHBOARD}/question/list`,
       edit: (id) => `${ROOTS.DASHBOARD}/question/${id}/edit`,
-    }
+    },
+    session: {
+      root:  `${ROOTS.DASHBOARD}/session`,
+      new: `${ROOTS.DASHBOARD}/session/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/session/${id}/view`,
+      list: `${ROOTS.DASHBOARD}/session/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/session/${id}/edit`,
+    },
+    subject: {
+      root:  `${ROOTS.DASHBOARD}/subject`,
+      new: `${ROOTS.DASHBOARD}/subject/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/subject/${id}/view`,
+      list: `${ROOTS.DASHBOARD}/subject/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/subject/${id}/edit`,
+    },
   },
 };

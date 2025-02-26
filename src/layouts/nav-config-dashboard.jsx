@@ -36,6 +36,10 @@ const ICONS = {
   dashboard: icon('ic-dashboard'),
   parameter: icon('ic-parameter'),
   question: icon('ic-question'),
+  subject: icon('ic-subject'),
+  exam: icon('ic-exam'),
+  session: icon('ic-session'),
+
 };
 
 // ----------------------------------------------------------------------
@@ -59,13 +63,12 @@ export const navData = [
     subheader: 'Management',
     items: [
       {
-        title: 'Group',
+        title: 'Exam',
         path: paths.dashboard.group.root,
-        icon: ICONS.user,
+        icon: ICONS.exam,
         children: [
-          { title: 'Four', path: paths.dashboard.group.root },
-          { title: 'Five', path: paths.dashboard.group.five },
-          { title: 'Six', path: paths.dashboard.group.six },
+          { title: 'List', path: paths.dashboard.exam.root },
+          { title: 'Create', path: paths.dashboard.exam.new },
         ],
       },
       {
@@ -77,6 +80,24 @@ export const navData = [
           { title: 'Create', path: paths.dashboard.question.new },
         ],
       },
+      {
+        title: 'Subject',
+        path: paths.dashboard.subject.root,
+        icon: ICONS.subject,
+        children: [
+          { title: 'List', path: paths.dashboard.subject.root },
+          { title: 'Create', path: paths.dashboard.subject.new },
+        ],
+      },
+      {
+        title: 'Session',
+        path: paths.dashboard.session.root,
+        icon: ICONS.session,
+        children: [
+          { title: 'List', path: paths.dashboard.session.root },
+          { title: 'Create', path: paths.dashboard.session.new },
+        ],
+      }
     ],
   },
 ];

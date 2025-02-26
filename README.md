@@ -1,37 +1,34 @@
-## 1.Prerequisites
+## Reunion 09/02/2024
 
-- Node.js 20.x (Recommended)
+* Ajout d'une colonne dans la table Test "owner_institut", qui permet de savoir si le test appartient à l'institut et lui permette d'ajouter des questions pour ce test.
 
----
+* Duration des questions en seconde
+* Etape automatisation de la création des sujets =>
 
-## 2.Installation
 
-#### Using Yarn (Recommended)
+* Lié Exam avec des Skills
 
-```sh
-yarn install
-yarn dev
-```
+  Session =>
+Test / LEVEL DELF / A1
 
-#### Using Npm
+EXAM => Epreuve
 
-```sh
-npm i
-npm run dev
-```
+Compétence  => Skills
 
----
+* Lié Exam avec des skills
+Une compétence peut etre evalué par plusieurs épreuves
 
-## 3.Mock Server
 
-By default we provide demo data from : `https://api-dev-minimal...`
+=>Jeux de donnée mettre durée des questions en seconde genre 25s
 
-To set up your local server:
 
-**Guide:** [https://docs.minimals.cc/mock-server](https://docs.minimals.cc/mock-server).
 
-**Resource:** [Download](https://www.dropbox.com/sh/6ojn099upi105tf/AACpmlqrNUacwbBfVdtt2t6va?dl=0).
+* Quand l'instittut va creer une session, elle est ouverte aux inscriptions des candidats.
+Quand l'institut va valider la session ( process de facturation pour get-Skills ), ainsi les sujets seriont générés automatiquement.
 
----
+=> Get-Skills, verifiera si les sujets générés sont cohérents ...ETC
+==> N'importe quel institut pourra créer des tests et acheter des sujets.
 
-**NOTE:** When copying folders remember to also copy hidden files like .env. This is important because .env files often contain environment variables that are crucial for the application to run correctly.
+
+
+* Nous demanderons le paiement quand on aura les attestations de reussite.

@@ -22,24 +22,23 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useGetTests} from "src/actions/test";
 
-import { useGetskills} from '../../actions/skill';
-
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
+import { useGetSkills} from '../../actions/skill';
 import {
   QuestionNewEditMcqUcq,
+  QuestionNewEditHighlight,
   QuestionNewEditTrueOrFalse,
   QuestionNewEditFillTheBlank,
-  QuestionNewEditHighlight,
-} from './type';
+} from './types';
 
 export const NewQuestionSchema = zod.object({
   label: zod.string().min(1, { message: 'Label is required!' }),
   instruction: zod.string().min(1, { message: 'instruction is required!' }),
-  timemax: zod.number().min(1, { message: 'Duration is required!' }),
-  point: zod.number().min(1, { message: 'Point is required!' }),
+  duration: zod.number().min(1, { message: 'Duration is required!' }),
+  points: zod.number().min(1, { message: 'Point is required!' }),
   test: zod.object({
     // Define your test object properties here
   }).nullable({
@@ -71,42 +70,88 @@ const questionTypes = [
   { value: 'Highlight', label: 'Highlight' },
 ];
 
-export function QuestionNewEditForm({ currentQuestion }) {
+export function QuestionNewEditForm({ currentQuestion = null }) {
 
 
   const router = useRouter();
 
   const { tests, testsLoading } = useGetTests(true);
 
-  const { skills, skillsLoading } = useGetskills(true);
+  const { skills, skillsLoading } = useGetSkills(true);
 
 
   const [testLevels, setTestLevels] = useState(null);
 
   const [questionType, setQuestionType] = useState(null);
 
+
   const defaultValues = useMemo(
-    () => ({
-      label: currentQuestion?.label || '',
-      instruction: currentQuestion?.instruction || '',
-      timemax: currentQuestion?.timemax || 0,
-      point: currentQuestion?.point || 0,
-      test:currentQuestion?.test || null,
-      level:currentQuestion?.level || null,
-      skills:currentQuestion?.skills || [],
-      type:currentQuestion?.type || null,
-      mcqItems: currentQuestion?.mcqItems || [
-        {
-          answer: '',
-          isCorrect: false
-        },
-      ],
-      blankSymbol: currentQuestion?.blankSymbol || '___',
-      sentence: currentQuestion?.sentence || '',
-      blankAnswers: currentQuestion?.blankAnswers || []
-    }),
+    () => {
+      // Valeurs de base communes à tous les types
+      const baseValues = {
+        label: currentQuestion?.label || '',
+        instruction: currentQuestion?.instruction || '',
+        duration: currentQuestion?.duration || 0,
+        points: currentQuestion?.points || 0,
+        test: currentQuestion?.test || null,
+        level: currentQuestion?.level || null,
+        skills: currentQuestion?.skills || [],
+        type: currentQuestion?.question_data ? {
+          value: currentQuestion.question_data.type,
+          label: currentQuestion.question_data.type
+        } : null
+      };
+
+      // Si pas de question existante, retourner juste les valeurs de base
+      if (!currentQuestion) {
+        return baseValues;
+      }
+
+      // Si question existante, ajouter les champs spécifiques selon le type
+      switch (currentQuestion.question_data.type) {
+        case 'MCQ':
+          return {
+            ...baseValues,
+            mcq: {
+              text: currentQuestion.question_data.content.text,
+              choices: currentQuestion.question_data.content.choices
+            }
+          };
+        case 'UCQ':
+          return {
+            ...baseValues,
+            ucq: {
+              text: currentQuestion.question_data.content.text,
+              choices: currentQuestion.question_data.content.choices
+            }
+          };
+
+        case 'FillInTheBlanks':
+          return {
+            ...baseValues,
+            fillintheblanks: {
+              blanksymbol: currentQuestion.question_data.content.blankSymbol,
+              answers: currentQuestion.question_data.content.answers,
+              text: currentQuestion.question_data.content.text
+            }
+          };
+
+        case 'Highlight':
+          return {
+            ...baseValues,
+            highlight: {
+              text: currentQuestion.question_data.content.text,
+              answers: currentQuestion.question_data.content.answers
+            }
+          };
+
+        default:
+          return baseValues;
+      }
+    },
     [currentQuestion]
   );
+
 
 
   const methods = useForm({
@@ -126,6 +171,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
 
   useEffect(() => {
     if (currentQuestion) {
+      setQuestionType({ value: currentQuestion.question_data.type, label:currentQuestion.question_data.type  });
       reset(defaultValues);
     }
   }, [currentQuestion, defaultValues, reset]);
@@ -135,8 +181,8 @@ export function QuestionNewEditForm({ currentQuestion }) {
       const formattedData = {
         label: data.label,
         instruction: data.instruction,
-        timemax: Number(data.timemax),
-        point: Number(data.point),
+        duration: Number(data.duration),
+        points: Number(data.points),
         test: {
           test_id: data.test.test_id,
           label: data.test.label
@@ -481,7 +527,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Max. Duration in minutes</Typography>
           <Field.Text
-            name="timemax"
+            name="duration"
             placeholder="60"
             type="number"
             InputProps={{
@@ -496,7 +542,7 @@ export function QuestionNewEditForm({ currentQuestion }) {
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Point(s)</Typography>
           <Field.Text
-            name="point"
+            name="points"
             placeholder="1234"
             type="number"
           />
@@ -588,10 +634,10 @@ export function QuestionNewEditForm({ currentQuestion }) {
         {renderDetails}
         {renderProperties}
         {renderQuestionTypes}
-        {questionType && (questionType.value === "MCQ" ||  questionType.value === "UCQ" ) ? <QuestionNewEditMcqUcq  type={questionType.value}   title={`${questionType.value} Question`}/> : ""}
-        {questionType && questionType.value === "TrueFalse" && <QuestionNewEditTrueOrFalse />}
-        {questionType && questionType.value === "FillInTheBlanks" && <QuestionNewEditFillTheBlank />}
-        {questionType && questionType.value === "Highlight" && <QuestionNewEditHighlight />}
+        {questionType && (questionType.value === "MCQ" ||  questionType.value === "UCQ" ) ? <QuestionNewEditMcqUcq  currentQuestion={ currentQuestion } /> : ""}
+        {questionType && questionType.value === "TrueFalse" && <QuestionNewEditTrueOrFalse  currentQuestion={ currentQuestion }/>}
+        {questionType && questionType.value === "FillInTheBlanks" && <QuestionNewEditFillTheBlank currentQuestion={ currentQuestion } />}
+        {questionType && questionType.value === "Highlight" && <QuestionNewEditHighlight  currentQuestion={ currentQuestion }/>}
         {renderActions}
       </Stack>
     </Form>

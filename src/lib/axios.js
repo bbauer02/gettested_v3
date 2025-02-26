@@ -42,4 +42,19 @@ export const endpoints = {
   skill: {
     list: '/api/skills',
   },
+  question: {
+    list: '/api/questions',
+    details: '/api/questions',
+    preview: '/api/questions',
+  },
+  subject: {
+    list: '/api/subjects',
+    details: '/api/subjects',
+    preview: '/api/subjects',
+  },
+  exam: {
+    list: '/api/exams',
+    details: '/api/exams',
+    preview: '/api/exams',
+  }
 };

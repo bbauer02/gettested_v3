@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { fetcher, endpoints } from 'src/lib/axios';
+import { endpoints, fetcher } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
 
@@ -13,20 +13,18 @@ const swrOptions = {
 
 // ----------------------------------------------------------------------
 
-export function useGetskills(child = false) {
+export function useGetSkills(child = false) {
   const url = `${endpoints.skill.list}?child=${child}`;
 
   const { data, isLoading, error, isValidating } = useSWR(url, fetcher, swrOptions);
-  const memoizedValue = useMemo(
+  return useMemo(
     () => ({
       skills: data?.skills || [],
       skillsLoading: isLoading,
       skillsError: error,
       skillsValidating: isValidating,
-     skillsEmpty: !isLoading && !data?.skills.length,
+      skillsEmpty: !isLoading && !data?.skills.length,
     }),
     [data?.skills, error, isLoading, isValidating]
   );
-
-  return memoizedValue;
 }

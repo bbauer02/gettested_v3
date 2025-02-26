@@ -4,24 +4,26 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { Field } from 'src/components/hook-form';
-import { Iconify } from 'src/components/iconify';
 
-export function QuestionNewEditFillTheBlank() {
+export function QuestionNewEditFillTheBlank({ currentQuestion = null }) {
   const { control, setValue, watch } = useFormContext();
+
+  // 🔹 Utilisation correcte de useFieldArray pour fillintheblanks.answers
   const { fields, append, remove, replace } = useFieldArray({
     control,
-    name: 'blankAnswers'
+    name: 'fillintheblanks.answers' // Correction ici
   });
 
+  // Récupération des valeurs du formulaire
   const values = watch();
-  const sentence = values?.sentence || '';
-  const blankSymbol = values?.blankSymbol || '___';
+
+  // 🔹 Correction des valeurs surveillées
+  const sentence = values?.fillintheblanks?.text || '';
+  const blankSymbol = values?.fillintheblanks?.blanksymbol || '___';
 
   // Fonction pour échapper les caractères spéciaux dans la regex
   const escapeRegExp = (string) => {
@@ -34,30 +36,41 @@ export function QuestionNewEditFillTheBlank() {
     return (text.match(regex) || []).length;
   };
 
-  // Met à jour les champs de réponse en fonction du nombre de blancs
+  // 🔹 Mise à jour dynamique des réponses en fonction du nombre de blancs
   useEffect(() => {
     const blankCount = countBlanks(sentence);
     const currentAnswers = fields.map(field => field.answer);
 
     if (blankCount > currentAnswers.length) {
-      const newAnswers = [
-        ...currentAnswers,
-        ...Array(blankCount - currentAnswers.length).fill('')
-      ];
-      replace(newAnswers.map(answer => ({ answer })));
+      // Ajout de nouvelles réponses en conservant les existantes
+      const newAnswers = [...currentAnswers];
+
+      for (let i = currentAnswers.length; i < blankCount; i++) {
+        newAnswers.push({ answer: "" });
+      }
+      replace(newAnswers);
     } else if (blankCount < currentAnswers.length) {
+      // Suppression des réponses en trop
       replace(currentAnswers.slice(0, blankCount).map(answer => ({ answer })));
     }
-  }, [sentence, fields.length, replace, blankSymbol]);
+  }, [sentence, blankSymbol, fields.length, replace]);
+
+  // 🔹 Chargement initial des réponses si la question existe
+  useEffect(() => {
+    if (currentQuestion?.question_data?.content?.answers) {
+      replace(currentQuestion.question_data.content.answers.map(answer => ({ answer })));
+    }
+  }, [currentQuestion, replace]);
 
   return (
     <Box sx={{ p: 3 }}>
       <Stack spacing={3}>
+
         {/* Configuration du symbole de remplacement */}
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Blank Symbol</Typography>
           <Field.Text
-            name="blankSymbol"
+            name="fillintheblanks.blanksymbol"
             size="small"
             placeholder="___"
             helperText={`Use this symbol in your text to indicate blanks. Current symbol: ${blankSymbol}`}
@@ -75,7 +88,7 @@ export function QuestionNewEditFillTheBlank() {
             indicate where blanks should appear. Example: "The capital of France is {blankSymbol}."
           </Alert>
           <Field.Editor
-            name="sentence"
+            name="fillintheblanks.text"
             sx={{ minHeight: 200 }}
           />
         </Stack>
@@ -99,13 +112,19 @@ export function QuestionNewEditFillTheBlank() {
                 </Typography>
 
                 <Field.Text
-                  name={`blankAnswers.${index}.answer`}
+                  name={`fillintheblanks.answers.${index}.answer`}
                   size="small"
                   placeholder="Enter the correct answer..."
                   sx={{ flexGrow: 1 }}
                 />
+
+                <button type="button" onClick={() => remove(index)}>❌</button>
               </Stack>
             ))}
+
+            <button type="button" onClick={() => append({ answer: "" })}>
+              ➕ Ajouter une réponse
+            </button>
           </Stack>
         )}
 
