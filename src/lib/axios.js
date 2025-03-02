@@ -56,5 +56,6 @@ export const endpoints = {
     list: '/api/exams',
     details: '/api/exams',
     preview: '/api/exams',
+    update: '/api/exams',
   }
 };

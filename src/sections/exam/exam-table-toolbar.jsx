@@ -1,164 +1,139 @@
-import { useCallback, useState } from 'react';
-import { varAlpha } from 'minimal-shared/utils';
+import { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import Stack from '@mui/material/Stack';
+
+// Mock imports - you'll need to replace with actual data from your API
+import { useGetTests } from 'src/actions/test';
+
+// ----------------------------------------------------------------------
 
 export function ExamTableToolbar({ filters, options }) {
-  const { state: currentFilters, setState: updateFilters } = filters;
-
+  const { currentFilters = { tests: [], levels: [] }, onFilters } = filters || {};
+  const { tests = [], levels = [] } = options || {};
 
   const [selectedTests, setSelectedTests] = useState(currentFilters.tests || []);
   const [selectedLevels, setSelectedLevels] = useState(currentFilters.levels || []);
 
   // Gérer la sélection des tests
-  const handleChangeTest = useCallback(
+  const handleChangeTests = useCallback(
     (event) => {
-      const { value } = event.target;
+      const {
+        target: { value },
+      } = event;
       setSelectedTests(typeof value === 'string' ? value.split(',') : value);
-
-      // Mettre à jour la liste des niveaux disponibles
-      const availableLevels = options.tests
-        .filter((test) => value.includes(test.label))
-        .flatMap((test) =>
-          test.Levels.map((level) => ({
-            level_id: level.level_id,
-            label: `${test.label} - ${level.label}`,
-          }))
-        );
-
-      // Conserver uniquement les niveaux sélectionnés qui sont encore valides
-      const validSelectedLevels = selectedLevels.filter((level) =>
-        availableLevels.some((availableLevel) => availableLevel.label === level)
-      );
-
-      setSelectedLevels(validSelectedLevels);
-      updateFilters({
-        ...currentFilters,
-        tests: value,
-        levels: validSelectedLevels,
-      });
     },
-    [options.tests, currentFilters, selectedLevels, updateFilters]
+    []
   );
 
   // Gérer la sélection des niveaux
-  const handleChangeLevel = useCallback((event) => {
-    const { value } = event.target;
-    setSelectedLevels(value);
-  }, []);
+  const handleChangeLevels = useCallback(
+    (event) => {
+      const {
+        target: { value },
+      } = event;
+      setSelectedLevels(typeof value === 'string' ? value.split(',') : value);
+    },
+    []
+  );
 
-  // Appliquer le filtre de test
-  const handleFilterTest = useCallback(() => {
-    updateFilters({
-      ...currentFilters,
-      tests: selectedTests,
-      levels: selectedLevels,
-    });
-  }, [updateFilters, selectedTests, selectedLevels, currentFilters]);
-
-  // Appliquer le filtre de niveau
-  const handleFilterLevel = useCallback(() => {
-    updateFilters({
-      ...currentFilters,
-      levels: selectedLevels,
-    });
-  }, [updateFilters, selectedLevels, currentFilters]);
-
-  // Calculer les niveaux disponibles basés sur les tests sélectionnés
-  const availableLevels = options.tests
-    .filter(test => selectedTests.includes(test.label) && test.Levels && test.Levels.length > 0)
-    .flatMap(test => test.Levels.map(level => ({
-      level_id: level.level_id,
-      label: `${test.label} - ${level.label}`
-    })));
-
-  const hasAvailableLevels = useCallback(() => options.tests
-    .filter((test) => selectedTests.includes(test.label))
-    .some((test) => test.Levels && test.Levels.length > 0), [selectedTests, options.tests]);
+  // Mettre à jour les filtres lorsque les sélections changent
+  useEffect(() => {
+    if (onFilters) {
+      onFilters('tests', selectedTests);
+      onFilters('levels', selectedLevels);
+    }
+  }, [onFilters, selectedTests, selectedLevels]);
 
   return (
-    <>
-      {/* Sélection des Tests */}
-      <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="filter-test-select">Test</InputLabel>
-        <Select
-          multiple
-          value={selectedTests}
-          onChange={handleChangeTest}
-          onClose={handleFilterTest}
-          input={<OutlinedInput label="Test" />}
-          renderValue={(selected) => selected.join(', ')}
-          inputProps={{ id: 'filter-test-select' }}
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {options.tests.map((option) => (
-            <MenuItem key={option.test_id} value={option.label}>
-              <Checkbox disableRipple size="small" checked={selectedTests.includes(option.label)} />
-              {option.label}
-            </MenuItem>
-          ))}
-
-          <MenuItem
-            onClick={handleFilterTest}
-            sx={[
-              (theme) => ({
-                justifyContent: 'center',
-                fontWeight: theme.typography.button,
-                bgcolor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-                border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
-              }),
-            ]}
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: { xs: 'column', md: 'row' }, 
+      alignItems: { xs: 'flex-start', md: 'center' },
+      justifyContent: 'space-between',
+      p: 2.5,
+      gap: 2
+    }}>
+      <Stack direction="row" spacing={2} sx={{ flexGrow: 1 }}>
+        {/* Sélection des Tests */}
+        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+          <InputLabel id="test-select-label">Tests</InputLabel>
+          <Select
+            labelId="test-select-label"
+            multiple
+            value={selectedTests}
+            onChange={handleChangeTests}
+            input={<OutlinedInput label="Tests" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    label={tests.find((test) => test.test_id === value)?.label || value}
+                    size="small"
+                  />
+                ))}
+              </Box>
+            )}
           >
-            Apply
-          </MenuItem>
-        </Select>
-      </FormControl>
+            {tests.map((test) => (
+              <MenuItem key={test.test_id} value={test.test_id}>
+                <Checkbox checked={selectedTests.indexOf(test.test_id) > -1} />
+                {test.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      {/* Sélection des Levels */}
-      <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="filter-level-select">Level</InputLabel>
-        <Select
-          disabled={!selectedTests.length || !hasAvailableLevels()}
-          multiple
-          value={selectedLevels}
-          onChange={handleChangeLevel}
-          onClose={handleFilterLevel}
-          input={<OutlinedInput label="Level" />}
-          renderValue={(selected) => selected.join(', ')}
-          inputProps={{ id: 'filter-level-select' }}
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {availableLevels.map((option) => (
-            <MenuItem key={option.level_id} value={option.label}>
-              <Checkbox
-                disableRipple
-                size="small"
-                checked={selectedLevels.includes(option.label)}
-              />
-              {option.label}
-            </MenuItem>
-          ))}
-
-          <MenuItem
-            onClick={handleFilterLevel}
-            sx={[
-              (theme) => ({
-                justifyContent: 'center',
-                fontWeight: theme.typography.button,
-                bgcolor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-                border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
-              }),
-            ]}
+        {/* Sélection des Niveaux */}
+        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+          <InputLabel id="level-select-label">Niveaux</InputLabel>
+          <Select
+            labelId="level-select-label"
+            multiple
+            value={selectedLevels}
+            onChange={handleChangeLevels}
+            input={<OutlinedInput label="Niveaux" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    label={levels.find((level) => level.level_id === value)?.label || value}
+                    size="small"
+                  />
+                ))}
+              </Box>
+            )}
           >
-            Apply
-          </MenuItem>
-        </Select>
-      </FormControl>
-    </>
+            {levels.map((level) => (
+              <MenuItem key={level.level_id} value={level.level_id}>
+                <Checkbox checked={selectedLevels.indexOf(level.level_id) > -1} />
+                {level.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Stack>
+    </Box>
   );
 }
+
+ExamTableToolbar.propTypes = {
+  filters: PropTypes.shape({
+    currentFilters: PropTypes.object,
+    onFilters: PropTypes.func
+  }),
+  options: PropTypes.shape({
+    tests: PropTypes.array,
+    levels: PropTypes.array
+  })
+};

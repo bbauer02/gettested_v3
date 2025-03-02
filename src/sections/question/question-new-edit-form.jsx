@@ -608,18 +608,12 @@ export function QuestionNewEditForm({ currentQuestion = null }) {
 
   const renderActions = (
     <Box display="flex" alignItems="center" flexWrap="wrap">
-      <FormControlLabel
-        control={<Switch defaultChecked inputProps={{ id: 'publish-switch' }} />}
-        label="Publish"
-        sx={{ flexGrow: 1, pl: 3 }}
-      />
-
       <LoadingButton
         type="submit"
         variant="contained"
         size="large"
         loading={isSubmitting}
-        sx={{ ml: 2 }}
+        sx={{flexGrow: 1, pl: 3  }}
       >
         {!currentQuestion ? 'Create question' : 'Save changes'}
       </LoadingButton>
