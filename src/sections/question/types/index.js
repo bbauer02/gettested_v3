@@ -1,6 +1,6 @@
 export * from './question-new-edit-mcq';
 
-export * from './question-new-edit-mcq-ucq';
+export * from './question-new-edit-ucq';
 
 export * from './question-new-edit-highlight';
 

@@ -46,16 +46,24 @@ export const endpoints = {
     list: '/api/questions',
     details: '/api/questions',
     preview: '/api/questions',
+    create: '/api/questions',
+    update: '/api/questions',
+    delete: '/api/questions',
   },
   subject: {
     list: '/api/subjects',
     details: '/api/subjects',
     preview: '/api/subjects',
+    generate: '/api/subjects/generate',
+    create: '/api/subjects',
+    update: '/api/subjects',
+    delete: '/api/subjects',
   },
   exam: {
     list: '/api/exams',
     details: '/api/exams',
     preview: '/api/exams',
     update: '/api/exams',
+    create: '/api/exams',
   }
 };

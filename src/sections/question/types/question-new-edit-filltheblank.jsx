@@ -25,6 +25,17 @@ export function QuestionNewEditFillTheBlank({ currentQuestion = null }) {
   const sentence = values?.fillintheblanks?.text || '';
   const blankSymbol = values?.fillintheblanks?.blanksymbol || '___';
 
+  // Définir la valeur par défaut pour blankSymbol lors du premier rendu
+  useEffect(() => {
+    // Initialiser le symbole de blanc s'il n'est pas défini
+    if (!values?.fillintheblanks?.blanksymbol) {
+      setValue('fillintheblanks.blanksymbol', '___', {
+        shouldValidate: true,
+        shouldDirty: true
+      });
+    }
+  }, [setValue, values?.fillintheblanks]);
+
   // Fonction pour échapper les caractères spéciaux dans la regex
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

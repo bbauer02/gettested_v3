@@ -1,23 +1,23 @@
 import { useEffect, useRef } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Switch from '@mui/material/Switch';
-import Divider from "@mui/material/Divider";
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Radio from '@mui/material/Radio';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { Field } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
 
-export function QuestionNewEditMcq({ currentQuestion = null }) {
+export function QuestionNewEditUcq({ currentQuestion = null }) {
   const { control, setValue, watch, trigger } = useFormContext();
 
   // Chemins pour les champs du formulaire
-  const choicesPath = 'mcq.choices';
-  const textPath = 'mcq.text';
+  const choicesPath = 'ucq.choices';
+  const textPath = 'ucq.text';
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -29,10 +29,10 @@ export function QuestionNewEditMcq({ currentQuestion = null }) {
 
   // Chargement initial des données
   useEffect(() => {
-    const currentQuestionData = values?.mcq;
+    const currentQuestionData = values?.ucq;
 
     if (currentQuestionData?.choices && isFirstRender.current) {
-      console.log('💡 Debug - Chargement des réponses MCQ:', currentQuestionData.choices);
+      console.log('💡 Debug - Chargement des réponses UCQ:', currentQuestionData.choices);
 
       // Mise à jour du texte de la question
       setValue(textPath, currentQuestionData.text || '');
@@ -65,13 +65,15 @@ export function QuestionNewEditMcq({ currentQuestion = null }) {
   }, [fields.length, append]);
 
   // Gestion du changement d'état "correct" pour une réponse
-  const handleAnswerChange = (index, value) => {
-    console.log(`🔄 Toggle correct pour MCQ index ${index} : ${value}`);
+  const handleAnswerChange = (index) => {
+    console.log(`🔄 Toggle correct pour UCQ index ${index}`);
     
-    // Pour MCQ, on peut avoir plusieurs réponses correctes
-    setValue(`${choicesPath}.${index}.isCorrect`, !!value, {
-      shouldValidate: true,
-      shouldDirty: true
+    // Pour UCQ, une seule réponse peut être correcte
+    fields.forEach((_, i) => {
+      setValue(`${choicesPath}.${i}.isCorrect`, i === index, {
+        shouldValidate: true,
+        shouldDirty: true
+      });
     });
     
     // Forcer la mise à jour de l'UI
@@ -81,51 +83,52 @@ export function QuestionNewEditMcq({ currentQuestion = null }) {
   return (
     <Box sx={{ p: 3 }}>
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
-        {/* Question field */}
+
+        {/* Champ de la question */}
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">MCQ Question</Typography>
+          <Typography variant="subtitle2">UCQ Question</Typography>
           <Field.Editor
             name={textPath}
             sx={{ minHeight: 200 }}
           />
         </Stack>
 
-        {/* Answers section */}
+        {/* Section des réponses */}
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Answers</Typography>
 
           {fields.map((item, index) => (
             <Stack
               key={item.id}
-              direction="row"
+              direction='row'
               spacing={2}
-              alignItems="center"
+              alignItems='center'
               sx={{ width: 1, mb: 2 }}
             >
               <Field.Text
-                size="small"
+                size='small'
                 name={`${choicesPath}.${index}.answer`}
-                placeholder="Enter an answer..."
+                placeholder='Enter an answer...'
                 sx={{ flexGrow: 1 }}
               />
 
               <FormControlLabel
                 control={
-                  <Switch
+                  <Radio
                     checked={!!watch(`${choicesPath}.${index}.isCorrect`)}
-                    onChange={(event) => handleAnswerChange(index, event.target.checked)}
+                    onChange={() => handleAnswerChange(index)}
                   />
                 }
-                label="Correct"
+                label='Correct'
               />
 
               <Button
-                size="small"
-                color="error"
+                size='small'
+                color='error'
                 onClick={() => remove(index)}
                 disabled={fields.length <= 2}
               >
-                <Iconify icon="solar:trash-bin-trash-bold" />
+                <Iconify icon='solar:trash-bin-trash-bold' />
               </Button>
             </Stack>
           ))}
@@ -134,19 +137,19 @@ export function QuestionNewEditMcq({ currentQuestion = null }) {
 
       <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 
-      {/* Add answer button */}
+      {/* Bouton pour ajouter une nouvelle réponse */}
       <Button
-        size="medium"
-        color="primary"
-        startIcon={<Iconify icon="mingcute:add-line" />}
+        size='medium'
+        color='primary'
+        startIcon={<Iconify icon='mingcute:add-line' />}
         onClick={() => append({ answer: '', isCorrect: false })}
       >
         Add Answer Option
       </Button>
 
-      {/* Helper text */}
+      {/* Texte d'aide */}
       <Typography
-        variant="caption"
+        variant='caption'
         sx={{
           display: 'block',
           mt: 2,
@@ -154,8 +157,8 @@ export function QuestionNewEditMcq({ currentQuestion = null }) {
           fontStyle: 'italic'
         }}
       >
-        Toggle switches to mark correct answers. Multiple correct answers are allowed.
+        Select one radio button to mark the correct answer. Only one answer can be correct.
       </Typography>
     </Box>
   );
-}
+} 

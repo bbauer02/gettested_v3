@@ -1,3 +1,4 @@
 export * from './subject-stepper';
-export * from './subject-details-step';
-export * from './subject-questions-step';
+export * from './subject-create-step1';
+export * from './subject-create-step2';
+export * from './subject-review-step';

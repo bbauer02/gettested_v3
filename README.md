@@ -32,3 +32,15 @@ Quand l'institut va valider la session ( process de facturation pour get-Skills 
 
 
 * Nous demanderons le paiement quand on aura les attestations de reussite.
+
+
+=> Un institut propriétaire d'un test peu authoriser un autre institut a exploiter le test qu'il a créé. 
+C est à dire creer une session avec ce test.
+
+=> A voir le paiement avec Olivier.
+
+Création SUBJET,; Simplification => Automatisation du nom du test : LEVEL + NIVEAU + numero de session
+
+( si pas de numero de session ajout date du jour + heure)
+
+Liste de sujet Numero de session qui a exploité ce sujet + institut
